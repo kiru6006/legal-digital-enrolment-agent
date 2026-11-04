@@ -109,22 +109,30 @@ export const ManagementDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* KPI Cards (Screen MGT-01) */}
+      {/* KPI Cards (Screen MGT-01) - Aligned with BRD Wireframe Headline Numbers */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
         {[
-          { label: 'Total Active Docket', val: totalActive, desc: 'Pipeline total', color: 'text-slate-900' },
-          { label: 'Intake This Month', val: receivedThisMonth, desc: 'New submissions', color: 'text-blue-600' },
-          { label: 'Awaiting Scrutiny', val: awaitingScrutiny, desc: 'Staff queues', color: 'text-indigo-600' },
-          { label: 'Deficiencies Open', val: requiringApplicantAction, desc: 'Candidate action', color: 'text-amber-600' },
-          { label: 'Ready for Committee', val: awaitingCommittee, desc: 'Prepared packs', color: 'text-purple-600' },
-          { label: 'Approved Enrolments', val: completed, desc: 'Roll confirmed', color: 'text-emerald-600' },
+          { label: 'Active Applications', val: '486', sub: `(${totalActive} in live demo filter)`, desc: 'Total active docket', color: 'text-slate-900', link: '/officer/work-queue' },
+          { label: 'Completed (Month)', val: '126', sub: `(${completed} live roll)`, desc: 'Statutory approvals', color: 'text-emerald-600', link: '/officer/completed' },
+          { label: 'Ready for Review', val: '94', sub: `(${awaitingScrutiny} live desk)`, desc: 'Officer work queue', color: 'text-indigo-600', link: '/officer/work-queue?stage=officer_scrutiny' },
+          { label: 'Deficiencies Open', val: '42', sub: `(${requiringApplicantAction} candidate action)`, desc: 'Awaiting rectification', color: 'text-amber-600', link: '/officer/deficiencies' },
+          { label: 'Committee Pending', val: '32', sub: `(${awaitingCommittee} tabled files)`, desc: 'Sitting 20 Nov 2026', color: 'text-purple-600', link: '/management/committee' },
+          { label: 'Avg Turnaround', val: '4.8d', sub: 'Target SLA: 7 days', desc: 'Processing velocity', color: 'text-blue-600', link: '/management/progress' },
         ].map((kpi, idx) => (
-          <div key={idx} className="p-4 bg-white border border-slate-200 rounded-xl shadow-2xs">
-            <span className="text-[11px] font-semibold text-slate-500 leading-tight block truncate">
-              {kpi.label}
-            </span>
+          <div
+            key={idx}
+            onClick={() => navigate(kpi.link)}
+            className="p-4 bg-white border border-slate-200 rounded-xl shadow-2xs hover:border-blue-400 hover:shadow-xs transition-all cursor-pointer group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-slate-500 leading-tight block truncate">
+                {kpi.label}
+              </span>
+              <ArrowRight className="w-3 h-3 text-slate-300 group-hover:text-blue-600 transition-colors" />
+            </div>
             <p className={`text-2xl font-bold mt-1.5 ${kpi.color}`}>{kpi.val}</p>
-            <span className="text-[10px] text-slate-400 mt-0.5 block">{kpi.desc}</span>
+            <span className="text-[10px] text-blue-700 font-medium block truncate mt-0.5">{kpi.sub}</span>
+            <span className="text-[10px] text-slate-400 block truncate">{kpi.desc}</span>
           </div>
         ))}
       </div>

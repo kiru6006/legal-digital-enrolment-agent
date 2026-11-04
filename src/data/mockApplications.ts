@@ -1,7 +1,7 @@
 import { ApplicationRecord } from '../types/application';
 import { DocumentItem } from '../types/document';
 
-export const PRIMARY_DEMO_APP_ID = 'AEMS-2026-00125';
+export const PRIMARY_DEMO_APP_ID = 'AEMS-2026-1045';
 
 export const initialPrimaryDocuments: DocumentItem[] = [
   {
@@ -194,7 +194,7 @@ export const initialMockApplications: ApplicationRecord[] = [
   // 1. Primary Demo Application: Arjun Kumar
   {
     id: PRIMARY_DEMO_APP_ID,
-    refNumber: 'AEMS-2026-00125',
+    refNumber: 'AEMS-2026-1045',
     applicantId: 'user-app-001',
     applicantName: 'Arjun Kumar',
     email: 'arjun.kumar.demo@example.com',

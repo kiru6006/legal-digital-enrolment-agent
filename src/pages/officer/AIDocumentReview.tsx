@@ -120,18 +120,21 @@ export const AIDocumentReview: React.FC = () => {
                     <CardTitle className="text-sm font-bold truncate">{doc.name}</CardTitle>
                     <p className="text-[11px] text-slate-400 font-mono">v{doc.version} &bull; {doc.fileSize}</p>
                   </div>
-                  <Badge
-                    size="sm"
-                    variant={
-                      doc.aiConfidence && doc.aiConfidence >= 0.9
-                        ? 'violet'
-                        : doc.aiConfidence && doc.aiConfidence >= 0.75
-                        ? 'warning'
-                        : 'neutral'
-                    }
-                  >
-                    AI: {doc.aiConfidence ? `${Math.round(doc.aiConfidence * 100)}%` : '92%'}
-                  </Badge>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[9px] bg-purple-100 text-purple-800 font-mono font-bold px-1.5 py-0.5 rounded border border-purple-200">
+                      SIMULATED AI
+                    </span>
+                    <Badge
+                      size="sm"
+                      variant={
+                        doc.aiConfidence && doc.aiConfidence >= 0.8
+                          ? 'violet'
+                          : 'warning'
+                      }
+                    >
+                      Confidence: {doc.aiConfidence ? `${Math.round(doc.aiConfidence * 100)}%` : '92%'}
+                    </Badge>
+                  </div>
                 </CardHeader>
 
                 <CardContent className="space-y-3 text-xs">

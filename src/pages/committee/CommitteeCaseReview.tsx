@@ -56,7 +56,7 @@ export const CommitteeCaseReview: React.FC = () => {
             Committee Review: {application.applicantName}
           </h1>
           <p className="text-xs text-slate-500">
-            Hearing Officer: {currentUser.name} ({currentUser.designation})
+            Sitting Date: <strong>20 November 2026</strong> &bull; Hearing Officer: {currentUser.name} ({currentUser.designation})
           </p>
         </div>
 
@@ -236,7 +236,7 @@ export const CommitteeCaseReview: React.FC = () => {
         <div className="space-y-4 text-xs">
           <div>
             <label className="block font-semibold text-slate-700 mb-1">Decision Outcome:</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <button
                 type="button"
                 onClick={() => setDecisionType('approved')}
@@ -266,11 +266,20 @@ export const CommitteeCaseReview: React.FC = () => {
                 onClick={() => setDecisionType('clarification_required')}
                 className={`py-2 px-3 rounded-lg border text-xs font-bold transition-all ${
                   decisionType === 'clarification_required'
-                    ? 'bg-rose-600 text-white border-rose-600 shadow-2xs'
+                    ? 'bg-purple-600 text-white border-purple-600 shadow-2xs'
                     : 'bg-white text-slate-700 border-slate-300'
                 }`}
               >
                 Seek Clarification
+              </button>
+
+              <button
+                type="button"
+                disabled
+                title="Per BRD Section 16.7: Reject / Withdraw paths are unapproved and disabled"
+                className="py-2 px-3 rounded-lg border text-xs font-semibold bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed text-center"
+              >
+                Reject / Withdraw <span className="block text-[9px] text-rose-500 font-bold">[Disabled: Pending Approval]</span>
               </button>
             </div>
           </div>

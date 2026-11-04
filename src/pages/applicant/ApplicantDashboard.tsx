@@ -73,6 +73,87 @@ export const ApplicantDashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* 5-Stage Statutory Progress Bar (Screen APP-01) */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <span className="text-xs font-bold text-slate-900 uppercase tracking-wide">
+              5-Stage Statutory Enrolment Progress
+            </span>
+            <p className="text-[11px] text-slate-500">
+              Real-time progress tracker through statutory scrutiny, verification, and Enrolment Committee roll admission.
+            </p>
+          </div>
+          <div className="text-right">
+            <span className="text-xl font-extrabold text-blue-600 font-mono">
+              {primaryApplication.progressPercentage}%
+            </span>
+            <span className="block text-[10px] text-slate-400 font-semibold uppercase">Overall Completion</span>
+          </div>
+        </div>
+
+        {/* 5 Stages Horizontal Tracker */}
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 pt-2">
+          {[
+            { step: '1', title: 'Submission', desc: 'Online filing & fee receipt', status: 'completed' },
+            { step: '2', title: 'AI Intake Check', desc: 'Classification & OCR match', status: 'completed' },
+            { step: '3', title: 'Official Scrutiny', desc: 'Officer review & verification', status: primaryApplication.stage === 'correction_requested' ? 'action_required' : 'in_progress' },
+            { step: '4', title: 'Committee Review', desc: 'Statutory Bench resolution', status: primaryApplication.progressPercentage >= 80 ? 'in_progress' : 'pending' },
+            { step: '5', title: 'Roll Admission', desc: 'Enrolment order & ID issued', status: primaryApplication.stage === 'completed' ? 'completed' : 'pending' },
+          ].map((st, i) => {
+            const isCompleted = st.status === 'completed';
+            const isAction = st.status === 'action_required';
+            const isInProgress = st.status === 'in_progress';
+
+            return (
+              <div
+                key={i}
+                className={`p-3 rounded-xl border transition-all ${
+                  isAction
+                    ? 'bg-amber-50/90 border-amber-300 ring-2 ring-amber-400/20'
+                    : isCompleted
+                    ? 'bg-emerald-50/70 border-emerald-200'
+                    : isInProgress
+                    ? 'bg-blue-50/80 border-blue-300 ring-2 ring-blue-500/20'
+                    : 'bg-slate-50/60 border-slate-200 opacity-60'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                      isAction
+                        ? 'bg-amber-600 text-white'
+                        : isCompleted
+                        ? 'bg-emerald-600 text-white'
+                        : isInProgress
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-300 text-slate-600'
+                    }`}
+                  >
+                    {isCompleted ? '✓' : st.step}
+                  </span>
+                  <span
+                    className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                      isAction
+                        ? 'bg-amber-200/80 text-amber-900'
+                        : isCompleted
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : isInProgress
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'text-slate-400'
+                    }`}
+                  >
+                    {isAction ? 'Action Req.' : isCompleted ? 'Cleared' : isInProgress ? 'Active' : 'Pending'}
+                  </span>
+                </div>
+                <p className="font-bold text-xs text-slate-900">{st.title}</p>
+                <p className="text-[10px] text-slate-500 leading-tight mt-0.5">{st.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Actionable Alert (If deficiencies open) */}
       {openDeficiencies.length > 0 && (
         <div className="bg-amber-50 border border-amber-300 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs animate-in fade-in">

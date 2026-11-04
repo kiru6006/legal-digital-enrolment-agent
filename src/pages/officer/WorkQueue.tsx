@@ -130,6 +130,37 @@ export const WorkQueue: React.FC = () => {
         </div>
       </div>
 
+      {/* Quick Bucket Tabs (Screen OFF-02) */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+        {[
+          { id: 'all', label: 'All Files', count: applications.length },
+          { id: 'submitted', label: 'New Intake', count: applications.filter(a => a.stage === 'submitted' || a.stage === 'ai_review').length },
+          { id: 'officer_scrutiny', label: 'Ready to Forward / Scrutiny', count: applications.filter(a => a.stage === 'officer_scrutiny').length },
+          { id: 'correction_requested', label: 'Corrections Received / Req.', count: applications.filter(a => a.stage === 'correction_requested' || a.deficiencies.some(d => d.status === 'open')).length },
+          { id: 'verification', label: 'Under Verification', count: applications.filter(a => a.stage === 'verification').length },
+          { id: 'committee_prep', label: 'Approvals & Committee', count: applications.filter(a => a.stage === 'committee_prep' || a.stage === 'committee_review' || a.stage === 'completed').length },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setStageFilter(tab.id)}
+            className={`px-3 py-2 rounded-xl font-semibold whitespace-nowrap transition-all flex items-center gap-2 border ${
+              stageFilter === tab.id
+                ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+            }`}
+          >
+            <span>{tab.label}</span>
+            <span
+              className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                stageFilter === tab.id ? 'bg-blue-700 text-white' : 'bg-slate-100 text-slate-700'
+              }`}
+            >
+              {tab.count}
+            </span>
+          </button>
+        ))}
+      </div>
+
       {/* Filter and Search Bar */}
       <Card>
         <CardContent className="p-4 space-y-3">

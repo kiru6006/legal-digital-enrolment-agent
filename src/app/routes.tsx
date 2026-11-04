@@ -47,54 +47,66 @@ export const AppRoutes: React.FC = () => {
         {/* Landing Page */}
         <Route index element={<LandingPage />} />
 
-        {/* Applicant Module */}
+        {/* Applicant Module (APP-01..APP-05) */}
         <Route path="applicant">
           <Route path="dashboard" element={<ApplicantDashboard />} />
+          <Route path="application" element={<NewApplication />} />
           <Route path="new-application" element={<NewApplication />} />
           <Route path="application/:id" element={<ApplicationDetails />} />
           <Route path="documents" element={<DocumentCorrection />} />
+          <Route path="corrections" element={<DocumentCorrection />} />
           <Route path="notifications" element={<ApplicantNotifications />} />
           <Route path="appointments" element={<ApplicantAppointments />} />
-          <Route index element={<Navigate to="/applicant/dashboard" replace />} />
+          <Route index element={<ApplicantDashboard />} />
         </Route>
 
-        {/* Officer Module */}
+        {/* Officer Module (OFF-01..OFF-05) */}
         <Route path="officer">
           <Route path="dashboard" element={<OfficerDashboard />} />
+          <Route path="work" element={<WorkQueue />} />
           <Route path="work-queue" element={<WorkQueue />} />
           <Route path="case/:id" element={<DigitalCaseFile />} />
+          <Route path="case/:id/ai" element={<AIDocumentReview />} />
+          <Route path="case/:id/deficiency" element={<DeficiencyManagement />} />
           <Route path="ai-review/:id" element={<AIDocumentReview />} />
           <Route path="time-savings" element={<WorkReductionPanel />} />
           <Route path="deficiencies" element={<DeficiencyManagement />} />
           <Route path="verification" element={<VerificationWorkspace />} />
           <Route path="completed" element={<CompletedWork />} />
-          <Route index element={<Navigate to="/officer/dashboard" replace />} />
+          <Route index element={<OfficerDashboard />} />
         </Route>
 
-        {/* Management Module */}
+        {/* Supervisor Module (OFF-06) */}
+        <Route path="supervisor">
+          <Route path="allocation" element={<TeamWorkload />} />
+          <Route index element={<Navigate to="/supervisor/allocation" replace />} />
+        </Route>
+
+        {/* Management Module (MGT-01..MGT-03) */}
         <Route path="management">
           <Route path="dashboard" element={<ManagementDashboard />} />
+          <Route path="teams" element={<TeamWorkload />} />
           <Route path="workload" element={<TeamWorkload />} />
           <Route path="progress" element={<ApplicationProgress />} />
           <Route path="reports" element={<Reports />} />
           <Route path="committee" element={<CommitteePrep />} />
-          <Route index element={<Navigate to="/management/dashboard" replace />} />
+          <Route index element={<ManagementDashboard />} />
         </Route>
 
-        {/* Committee Module */}
+        {/* Committee Module (COM-01..COM-02) */}
         <Route path="committee">
           <Route path="dashboard" element={<CommitteeDashboard />} />
           <Route path="case/:id" element={<CommitteeCaseReview />} />
           <Route path="meeting-pack" element={<MeetingPack />} />
-          <Route index element={<Navigate to="/committee/dashboard" replace />} />
+          <Route index element={<CommitteeDashboard />} />
         </Route>
 
-        {/* Admin Module */}
+        {/* Admin Module (ADM-01) */}
         <Route path="admin">
           <Route path="users" element={<AdminUsers />} />
           <Route path="checklists" element={<AdminChecklists />} />
           <Route path="configuration" element={<AdminConfig />} />
-          <Route index element={<Navigate to="/admin/users" replace />} />
+          <Route index element={<AdminUsers />} />
         </Route>
 
         {/* Catch-all */}
@@ -103,4 +115,3 @@ export const AppRoutes: React.FC = () => {
     </Routes>
   );
 };
-

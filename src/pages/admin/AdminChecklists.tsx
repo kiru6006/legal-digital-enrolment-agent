@@ -27,9 +27,17 @@ export const AdminChecklists: React.FC = () => {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+            Checklist Administration
+          </span>
+          <span className="text-[10px] bg-amber-50 text-amber-800 font-bold px-2 py-0.5 rounded border border-amber-300">
+            DRAFT CHECKLIST, NOT APPROVED
+          </span>
+        </div>
         <h1 className="text-xl font-bold text-slate-900">Statutory Scrutiny Checklist Configuration</h1>
         <p className="text-xs text-slate-500">
-          Configure mandatory document requirements and rules evaluated during AI intake and officer verification.
+          Configure mandatory document requirements and rules evaluated during AI intake and officer verification. (BRD D6.1 illustrative categories).
         </p>
       </div>
 

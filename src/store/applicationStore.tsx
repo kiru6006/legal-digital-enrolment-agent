@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ApplicationRecord, ApplicationStage, VerificationStatus } from '../types/application';
+import { ApplicationRecord, ApplicationStage, VerificationStatus, AuditEvent } from '../types/application';
 import { DocumentItem } from '../types/document';
 import { NotificationItem } from '../types/notification';
 import { User, UserRole } from '../types/user';
@@ -11,6 +11,58 @@ import { aiDemoService } from '../services/aiDemoService';
 const STORAGE_KEY_APPS = 'aems_demo_applications_v1';
 const STORAGE_KEY_NOTIFS = 'aems_demo_notifications_v1';
 const STORAGE_KEY_ROLE = 'aems_demo_current_role_v1';
+const STORAGE_KEY_AUDIT = 'aems_demo_audit_events_v1';
+
+export const initialSeedAuditEvents: AuditEvent[] = [
+  {
+    id: 'audit-001',
+    userId: 'user-app-001',
+    userName: 'Arjun Kumar',
+    userRole: 'Applicant',
+    action: 'APPLICATION_SUBMITTED',
+    entityId: PRIMARY_DEMO_APP_ID,
+    from: 'DRAFT',
+    to: 'SUBMITTED',
+    reason: 'New enrolment docket created with 14 uploaded documents',
+    timestamp: '2026-11-01 10:14:22',
+  },
+  {
+    id: 'audit-002',
+    userId: 'system-ai',
+    userName: 'SIMULATED AI Assistant',
+    userRole: 'Intake AI',
+    action: 'AI_INTAKE_ANALYSIS_COMPLETED',
+    entityId: PRIMARY_DEMO_APP_ID,
+    from: 'SUBMITTED',
+    to: 'READY_FOR_SCRUTINY',
+    reason: 'Identified 12 confirmed documents and 2 potential exceptions (Semester 6 marksheet missing)',
+    timestamp: '2026-11-01 10:14:45',
+  },
+  {
+    id: 'audit-003',
+    userId: 'user-off-001',
+    userName: 'M. Srinivasan',
+    userRole: 'Scrutiny Officer',
+    action: 'SCRUTINY_OPENED',
+    entityId: PRIMARY_DEMO_APP_ID,
+    from: 'READY_FOR_SCRUTINY',
+    to: 'UNDER_REVIEW',
+    reason: 'Case docket claimed into official work queue',
+    timestamp: '2026-11-02 09:30:10',
+  },
+  {
+    id: 'audit-004',
+    userId: 'user-off-001',
+    userName: 'M. Srinivasan',
+    userRole: 'Scrutiny Officer',
+    action: 'DEFICIENCY_RAISED',
+    entityId: PRIMARY_DEMO_APP_ID,
+    from: 'UNDER_REVIEW',
+    to: 'DEFICIENCY_RAISED',
+    reason: 'Rule 8 Marksheet Gap: Semester 6 marksheet missing; Residential Proof expired',
+    timestamp: '2026-11-02 11:20:00',
+  },
+];
 
 interface ApplicationStoreContextType {
   currentRole: UserRole;
@@ -18,6 +70,7 @@ interface ApplicationStoreContextType {
   switchRole: (role: UserRole) => void;
   applications: ApplicationRecord[];
   notifications: NotificationItem[];
+  auditEvents: AuditEvent[];
   primaryApplication: ApplicationRecord;
   getApplication: (id: string) => ApplicationRecord | undefined;
   updateApplication: (id: string, updates: Partial<ApplicationRecord>) => void;
@@ -92,6 +145,19 @@ export const ApplicationStoreProvider: React.FC<{ children: React.ReactNode }> =
     return initialMockNotifications;
   });
 
+  // 4. Initialize audit events
+  const [auditEvents, setAuditEvents] = useState<AuditEvent[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_AUDIT);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.error('Failed to parse saved audit events from localStorage', e);
+    }
+    return initialSeedAuditEvents;
+  });
+
   const [isAIProcessing, setIsAIProcessing] = useState(false);
 
   // Sync with localStorage
@@ -107,6 +173,10 @@ export const ApplicationStoreProvider: React.FC<{ children: React.ReactNode }> =
     localStorage.setItem(STORAGE_KEY_NOTIFS, JSON.stringify(notifications));
   }, [notifications]);
 
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_AUDIT, JSON.stringify(auditEvents));
+  }, [auditEvents]);
+
   // Active user derived from role
   const currentUser: User =
     mockUsers.find((u) => u.role === currentRole) || mockUsers[0];
@@ -114,12 +184,35 @@ export const ApplicationStoreProvider: React.FC<{ children: React.ReactNode }> =
   const primaryApplication =
     applications.find((a) => a.id === PRIMARY_DEMO_APP_ID) || applications[0];
 
+  const recordAuditEvent = (
+    action: string,
+    entityId: string,
+    details?: { from?: string; to?: string; reason?: string }
+  ) => {
+    const newEvent: AuditEvent = {
+      id: `audit-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      userId: currentUser.id,
+      userName: currentUser.name,
+      userRole: currentUser.proposedRole || currentUser.role,
+      action,
+      entityId,
+      from: details?.from,
+      to: details?.to,
+      reason: details?.reason,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+    };
+    setAuditEvents((prev) => [newEvent, ...prev]);
+  };
+
   const switchRole = (role: UserRole) => {
     setCurrentRole(role);
   };
 
   const getApplication = (id: string) => {
-    return applications.find((a) => a.id === id || a.refNumber === id);
+    return (
+      applications.find((a) => a.id === id || a.refNumber === id) ||
+      (id === 'AEMS-2026-00125' || id === 'AEMS-2026-1045' ? primaryApplication : undefined)
+    );
   };
 
   const updateApplication = (id: string, updates: Partial<ApplicationRecord>) => {
@@ -596,8 +689,10 @@ export const ApplicationStoreProvider: React.FC<{ children: React.ReactNode }> =
     localStorage.removeItem(STORAGE_KEY_APPS);
     localStorage.removeItem(STORAGE_KEY_NOTIFS);
     localStorage.removeItem(STORAGE_KEY_ROLE);
+    localStorage.removeItem(STORAGE_KEY_AUDIT);
     setApplications(initialMockApplications);
     setNotifications(initialMockNotifications);
+    setAuditEvents(initialSeedAuditEvents);
     setCurrentRole('applicant');
   };
 
@@ -609,6 +704,7 @@ export const ApplicationStoreProvider: React.FC<{ children: React.ReactNode }> =
         switchRole,
         applications,
         notifications,
+        auditEvents,
         primaryApplication,
         getApplication,
         updateApplication,

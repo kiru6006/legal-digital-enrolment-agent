@@ -695,45 +695,77 @@ export const DigitalCaseFile: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2.5 text-xs">
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => forwardStage(application.id, 'verification', 'Verification in Progress')}
-                className="w-full justify-start gap-2"
-                icon={<ShieldCheck className="w-4 h-4" />}
-              >
-                Forward to Verification
-              </Button>
+              <div>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => forwardStage(application.id, 'verification', 'Verification in Progress')}
+                  className="w-full justify-start gap-2"
+                  icon={<ShieldCheck className="w-4 h-4" />}
+                >
+                  Forward to Verification
+                </Button>
+                <span className="text-[10px] text-slate-500 block px-1 mt-0.5">
+                  Consequence: Moves file to Education/Identity queue.
+                </span>
+              </div>
 
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => forwardStage(application.id, 'committee_prep', 'Ready for Committee')}
-                className="w-full justify-start gap-2 text-slate-800"
-                icon={<Gavel className="w-4 h-4 text-indigo-600" />}
-              >
-                Forward to Committee Prep
-              </Button>
+              <div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => forwardStage(application.id, 'committee_prep', 'Ready for Committee')}
+                  className="w-full justify-start gap-2 text-slate-800"
+                  icon={<Gavel className="w-4 h-4 text-indigo-600" />}
+                >
+                  Forward to Committee Prep
+                </Button>
+                <span className="text-[10px] text-slate-500 block px-1 mt-0.5">
+                  Consequence: Adds case to Committee Sitting Agenda.
+                </span>
+              </div>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setDeficiencyModalOpen(true)}
-                className="w-full justify-start gap-2 text-amber-800 border-amber-200 hover:bg-amber-50"
-                icon={<AlertCircle className="w-4 h-4 text-amber-600" />}
-              >
-                Issue Deficiency Notice
-              </Button>
+              <div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDeficiencyModalOpen(true)}
+                  className="w-full justify-start gap-2 text-amber-800 border-amber-200 hover:bg-amber-50"
+                  icon={<AlertCircle className="w-4 h-4 text-amber-600" />}
+                >
+                  Issue Deficiency Notice
+                </Button>
+                <span className="text-[10px] text-slate-500 block px-1 mt-0.5">
+                  Consequence: Applicant will be notified via SMS/Email.
+                </span>
+              </div>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/officer/time-savings')}
-                className="w-full justify-start gap-2 text-purple-800 border-purple-200 hover:bg-purple-50"
-                icon={<Clock className="w-4 h-4 text-purple-600" />}
-              >
-                View AI Work Reduction
-              </Button>
+              <div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/officer/time-savings')}
+                  className="w-full justify-start gap-2 text-purple-800 border-purple-200 hover:bg-purple-50"
+                  icon={<Clock className="w-4 h-4 text-purple-600" />}
+                >
+                  View AI Work Reduction
+                </Button>
+              </div>
+
+              {/* Disabled Reject / Withdraw action per BRD Section 16.7 */}
+              <div className="pt-2 border-t border-slate-200">
+                <button
+                  type="button"
+                  disabled
+                  title="Per BRD Section 16.7: Reject / Withdraw paths are unapproved and disabled in prototype"
+                  className="w-full py-2 px-3 rounded-lg border text-xs font-semibold bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed text-center"
+                >
+                  Reject / Withdraw Application
+                  <span className="block text-[9px] text-rose-500 font-bold">
+                    [Disabled: Pending Bar Council Approval]
+                  </span>
+                </button>
+              </div>
             </CardContent>
           </Card>
 

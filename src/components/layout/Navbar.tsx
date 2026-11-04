@@ -72,15 +72,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenNotifications, onOpenWalkt
           <span className="text-[#9AA0A6] hidden sm:inline">| Statutory Enrolment Platform MVP</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden sm:inline text-[var(--google-yellow)] font-mono text-[11px] font-semibold">
-            DEMO ENVIRONMENT • SYNTHETIC DATA
+          <span className="hidden sm:inline text-[var(--google-yellow)] font-mono text-[11px] font-semibold bg-amber-950/60 px-2 py-0.5 rounded border border-amber-500/30">
+            DEMO • Illustrative data • No real applicant information
           </span>
           <button
             onClick={onOpenWalkthrough}
-            className="text-[#8AB4F8] hover:text-white flex items-center gap-1 font-semibold transition-colors cursor-pointer"
+            className="text-[#8AB4F8] hover:text-white flex items-center gap-1 font-semibold transition-colors cursor-pointer text-xs"
           >
             <Sparkles className="w-3.5 h-3.5 text-[#C58AF9]" />
-            <span>5-Min Demo Script</span>
+            <span>Scenario Walkthrough (BRD B7)</span>
           </button>
         </div>
       </div>

@@ -133,3 +133,17 @@ export interface ApplicationRecord {
   };
 }
 
+export interface AuditEvent {
+  id: string;
+  userId: string;
+  userName: string;
+  userRole?: string;
+  action: string;
+  entityId: string;
+  from?: string;
+  to?: string;
+  reason?: string;
+  timestamp: string;
+}
+
+

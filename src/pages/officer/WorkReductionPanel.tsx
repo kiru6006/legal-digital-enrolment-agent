@@ -178,3 +178,4 @@ export const WorkReductionPanel: React.FC = () => {
     </div>
   );
 };
+

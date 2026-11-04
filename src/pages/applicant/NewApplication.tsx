@@ -678,3 +678,4 @@ export const NewApplication: React.FC = () => {
     </div>
   );
 };
+

@@ -298,3 +298,4 @@ export const ApplicantDashboard: React.FC = () => {
     </div>
   );
 };
+

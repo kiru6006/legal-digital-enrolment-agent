@@ -6,3 +6,4 @@ export default defineConfig({
   plugins: [react()],
   base: './', // Ensures relative assets work cleanly on GitHub Pages or custom subpaths
 })
+

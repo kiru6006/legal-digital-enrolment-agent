@@ -23,3 +23,4 @@ export interface NotificationItem {
   relatedRefNumber?: string;
   actionUrl?: string;
 }
+

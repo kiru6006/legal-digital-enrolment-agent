@@ -96,3 +96,4 @@ export const initialMockNotifications: NotificationItem[] = [
     actionUrl: '/committee/dashboard',
   },
 ];
+

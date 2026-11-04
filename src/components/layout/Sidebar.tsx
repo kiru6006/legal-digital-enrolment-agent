@@ -35,7 +35,7 @@ interface NavItem {
 }
 
 export const Sidebar: React.FC = () => {
-  const { currentRole, primaryApplication, notifications } = useAEMS();
+  const { currentRole, primaryApplication } = useAEMS();
   const location = useLocation();
 
   const applicantLinks: NavItem[] = [
@@ -119,16 +119,16 @@ export const Sidebar: React.FC = () => {
   const currentSection = roleSections[currentRole] || roleSections.applicant;
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 min-h-[calc(100vh-4rem)] border-r border-slate-800">
+    <aside className="w-64 bg-[var(--color-surface-white)] text-[var(--color-text-primary)] flex flex-col shrink-0 min-h-[calc(100vh-4rem)] border-r border-[var(--color-border)] shadow-xs">
       {/* Module Title */}
-      <div className="px-5 py-4 border-b border-slate-800/80 flex items-center justify-between">
+      <div className="px-5 py-4 border-b border-[var(--color-surface-muted)] flex items-center justify-between">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Current Module
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+            Active Module
           </span>
-          <h2 className="text-sm font-semibold text-white tracking-wide">{currentSection.title}</h2>
+          <h2 className="text-sm font-bold text-[var(--color-text-primary)] tracking-tight">{currentSection.title}</h2>
         </div>
-        <Compass className="w-4 h-4 text-blue-400" />
+        <Compass className="w-4 h-4 text-[var(--google-blue-strong)]" />
       </div>
 
       {/* Nav List */}
@@ -141,28 +141,28 @@ export const Sidebar: React.FC = () => {
             <NavLink
               key={link.to}
               to={link.to}
-              className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all group ${
+              className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-all cursor-pointer group ${
                 isActive
-                  ? 'bg-blue-600 text-white shadow-xs font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  ? 'bg-[var(--semantic-primary-soft)] text-[var(--google-blue-strong)] font-bold shadow-2xs'
+                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)] font-medium'
               }`}
             >
               <div className="flex items-center gap-3">
                 <Icon
                   className={`w-4 h-4 transition-colors ${
-                    isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'
+                    isActive ? 'text-[var(--google-blue-strong)]' : 'text-[var(--color-text-muted)] group-hover:text-[var(--color-text-secondary)]'
                   }`}
                 />
                 <span>{link.label}</span>
               </div>
               {link.badge && (
                 <span
-                  className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${
+                  className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
                     link.badgeColor === 'amber'
-                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                      ? 'bg-[var(--semantic-warning-soft)] text-[#B06000] border border-[#FEEFC3]'
                       : link.badgeColor === 'violet'
-                      ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-                      : 'bg-blue-800/60 text-blue-200'
+                      ? 'bg-[var(--semantic-ai-soft)] text-[var(--color-purple-dark)] border border-[#E9D5FF]'
+                      : 'bg-[var(--semantic-primary-soft)] text-[var(--google-blue-strong)]'
                   }`}
                 >
                   {link.badge}
@@ -174,18 +174,18 @@ export const Sidebar: React.FC = () => {
       </nav>
 
       {/* Primary Demo Scenario Indicator Card */}
-      <div className="p-3 m-3 bg-slate-800/80 rounded-xl border border-slate-700/60">
-        <div className="flex items-center gap-2 mb-1.5">
-          <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
-          <span className="text-[11px] font-bold text-slate-200 uppercase tracking-wider">
+      <div className="p-3.5 m-3 bg-[var(--vignxs-soft)] rounded-xl border border-[var(--vignxs-pink-light)]">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="w-2 h-2 rounded-full bg-[var(--vignxs-crimson)] animate-pulse"></span>
+          <span className="text-[10px] font-bold text-[var(--vignxs-crimson)] uppercase tracking-wider">
             Primary Demo Case
           </span>
         </div>
-        <p className="text-xs text-slate-300 font-semibold truncate">Arjun Kumar</p>
-        <p className="text-[11px] text-slate-400 font-mono">Ref: {PRIMARY_DEMO_APP_ID}</p>
-        <div className="mt-2 pt-2 border-t border-slate-700/60 flex items-center justify-between text-[11px]">
-          <span className="text-slate-400">Current Status:</span>
-          <span className="text-amber-300 font-medium">{primaryApplication.statusLabel}</span>
+        <p className="text-xs text-[var(--color-text-primary)] font-bold truncate">Arjun Kumar</p>
+        <p className="text-[11px] text-[var(--color-text-secondary)] font-mono">Ref: {PRIMARY_DEMO_APP_ID}</p>
+        <div className="mt-2 pt-2 border-t border-[var(--vignxs-pink-light)] flex items-center justify-between text-[11px]">
+          <span className="text-[var(--color-text-secondary)]">Status:</span>
+          <span className="text-[var(--vignxs-crimson)] font-bold">{primaryApplication.statusLabel}</span>
         </div>
       </div>
     </aside>

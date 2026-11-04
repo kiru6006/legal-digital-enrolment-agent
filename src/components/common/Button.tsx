@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'ai';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'brand' | 'ai';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   icon?: React.ReactNode;
@@ -24,23 +24,25 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const variantStyles = {
       primary:
-        'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 shadow-sm border border-transparent disabled:bg-blue-300',
+        'bg-[var(--google-blue-strong)] text-white hover:bg-[#1765CC] active:bg-[#1557B0] shadow-xs border border-transparent disabled:opacity-50',
       secondary:
-        'bg-slate-100 text-slate-800 hover:bg-slate-200 active:bg-slate-300 border border-slate-200 disabled:opacity-50',
+        'bg-[var(--color-surface-muted)] text-[var(--color-text-primary)] hover:bg-[#E8EAED] active:bg-[#DADCE0] border border-[var(--color-border)] disabled:opacity-50',
       outline:
-        'bg-white text-slate-700 hover:bg-slate-50 border border-slate-300 active:bg-slate-100 shadow-sm disabled:opacity-50',
+        'bg-[var(--color-surface-white)] text-[var(--color-text-primary)] hover:bg-[var(--semantic-primary-soft)] hover:text-[var(--google-blue-strong)] hover:border-[#C2E7FF] border border-[var(--color-border)] active:bg-[#F1F3F4] shadow-xs disabled:opacity-50',
       ghost:
-        'text-slate-600 hover:bg-slate-100 active:bg-slate-200 border border-transparent disabled:opacity-40',
+        'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)] border border-transparent disabled:opacity-40',
       danger:
-        'bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800 shadow-sm border border-transparent disabled:opacity-50',
+        'bg-[var(--google-red)] text-white hover:bg-[var(--google-red-dark)] active:bg-[#B31412] shadow-xs border border-transparent disabled:opacity-50',
+      brand:
+        'bg-[var(--vignxs-crimson)] text-white hover:bg-[var(--vignxs-crimson-deep)] active:bg-[#8E0023] shadow-xs border border-transparent disabled:opacity-50',
       ai:
-        'bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700 active:from-purple-800 active:to-indigo-800 shadow-sm border border-transparent disabled:opacity-50',
+        'bg-gradient-to-r from-[var(--color-purple)] to-[var(--color-indigo)] text-white hover:opacity-95 active:opacity-90 shadow-xs border border-transparent disabled:opacity-50',
     };
 
     const sizeStyles = {
       sm: 'text-xs px-2.5 py-1.5 rounded-md gap-1.5',
-      md: 'text-sm px-3.5 py-2 rounded-lg gap-2',
-      lg: 'text-base px-5 py-2.5 rounded-lg gap-2.5',
+      md: 'text-xs sm:text-sm px-3.5 py-2 rounded-lg gap-2 font-medium',
+      lg: 'text-sm sm:text-base px-5 py-2.5 rounded-lg gap-2.5 font-medium',
     };
 
     return (
@@ -48,7 +50,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={cn(
-          'inline-flex items-center justify-center font-medium transition-all duration-150 select-none focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:cursor-not-allowed',
+          'inline-flex items-center justify-center font-medium transition-all duration-150 select-none focus:outline-none focus:ring-2 focus:ring-[var(--google-blue)]/30 disabled:cursor-not-allowed cursor-pointer',
           variantStyles[variant],
           sizeStyles[size],
           className

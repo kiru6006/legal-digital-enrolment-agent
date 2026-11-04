@@ -88,3 +88,4 @@ export const ApplicationProgress: React.FC = () => {
     </div>
   );
 };
+

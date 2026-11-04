@@ -143,3 +143,4 @@ The repository includes a ready-to-run GitHub Actions workflow at `.github/workf
 ## 📄 License & Attribution
 
 Developed for presentation to the **Bar Council of Tamil Nadu and Puducherry**. Sample applicant records, dates, and contact particulars are entirely synthetic and created solely for technical evaluation.
+

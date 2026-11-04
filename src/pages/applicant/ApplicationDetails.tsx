@@ -324,3 +324,4 @@ export const ApplicationDetails: React.FC = () => {
     </div>
   );
 };
+

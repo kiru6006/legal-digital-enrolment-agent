@@ -176,3 +176,4 @@ export const CommitteeDashboard: React.FC = () => {
     </div>
   );
 };
+

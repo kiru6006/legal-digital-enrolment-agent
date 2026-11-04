@@ -1335,3 +1335,4 @@ export const initialMockApplications: ApplicationRecord[] = [
     timeline: [],
   },
 ];
+

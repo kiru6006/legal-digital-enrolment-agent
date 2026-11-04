@@ -8,6 +8,7 @@ export type BadgeVariant =
   | 'warning'
   | 'danger'
   | 'violet'
+  | 'brand'
   | 'neutral';
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -23,24 +24,25 @@ export const Badge: React.FC<BadgeProps> = ({
   ...props
 }) => {
   const variantStyles: Record<BadgeVariant, string> = {
-    default: 'bg-slate-100 text-slate-800 border-slate-200',
-    primary: 'bg-blue-50 text-blue-700 border-blue-200',
-    success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    warning: 'bg-amber-50 text-amber-800 border-amber-200',
-    danger: 'bg-rose-50 text-rose-700 border-rose-200',
-    violet: 'bg-purple-50 text-purple-700 border-purple-200',
-    neutral: 'bg-slate-100 text-slate-600 border-slate-200',
+    default: 'bg-[var(--semantic-neutral-soft)] text-[var(--color-text-secondary)] border-[var(--color-border)]',
+    primary: 'bg-[var(--semantic-primary-soft)] text-[var(--google-blue-strong)] border-[#C2E7FF]',
+    success: 'bg-[var(--semantic-success-soft)] text-[var(--google-green-dark)] border-[#C4EED0]',
+    warning: 'bg-[var(--semantic-warning-soft)] text-[#B06000] border-[#FEEFC3]',
+    danger: 'bg-[var(--semantic-error-soft)] text-[var(--google-red-dark)] border-[#FAD2CF]',
+    violet: 'bg-[var(--semantic-ai-soft)] text-[var(--color-purple-dark)] border-[#E9D5FF]',
+    brand: 'bg-[var(--vignxs-soft)] text-[var(--vignxs-crimson)] border-[var(--vignxs-pink-light)]',
+    neutral: 'bg-[var(--semantic-neutral-soft)] text-[var(--color-text-secondary)] border-[var(--color-border)]',
   };
 
   const sizeStyles = {
-    sm: 'text-xs px-2 py-0.5 rounded',
-    md: 'text-xs font-medium px-2.5 py-1 rounded-md',
+    sm: 'text-[11px] px-2 py-0.5 rounded font-semibold',
+    md: 'text-xs font-semibold px-2.5 py-1 rounded-md',
   };
 
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 border font-medium transition-colors',
+        'inline-flex items-center gap-1 border transition-colors',
         variantStyles[variant],
         sizeStyles[size],
         className

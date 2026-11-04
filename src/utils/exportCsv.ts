@@ -50,3 +50,4 @@ export function exportApplicationsToCSV(
   link.click();
   document.body.removeChild(link);
 }
+

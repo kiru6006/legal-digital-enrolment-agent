@@ -275,3 +275,4 @@ export const DeficiencyManagement: React.FC = () => {
     </div>
   );
 };
+

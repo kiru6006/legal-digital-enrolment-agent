@@ -103,3 +103,4 @@ export const AdminConfig: React.FC = () => {
     </div>
   );
 };
+

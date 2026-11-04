@@ -126,3 +126,4 @@ export const ApplicantAppointments: React.FC = () => {
     </div>
   );
 };
+

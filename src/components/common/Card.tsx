@@ -14,8 +14,8 @@ export const Card: React.FC<CardProps> = ({
   return (
     <div
       className={cn(
-        'bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden transition-all',
-        hoverEffect && 'hover:shadow-md hover:border-slate-300',
+        'bg-[var(--color-surface-white)] border border-[var(--color-border)] rounded-xl shadow-card overflow-hidden transition-all duration-150',
+        hoverEffect && 'hover:shadow-card-hover hover:border-[var(--color-border-strong)]',
         className
       )}
       {...props}
@@ -32,7 +32,7 @@ export const CardHeader: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
 }) => {
   return (
     <div
-      className={cn('px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-4', className)}
+      className={cn('px-5 py-4 border-b border-[var(--color-surface-muted)] flex items-center justify-between gap-4', className)}
       {...props}
     >
       {children}
@@ -46,7 +46,7 @@ export const CardTitle: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({
   ...props
 }) => {
   return (
-    <h3 className={cn('text-base font-semibold text-slate-900', className)} {...props}>
+    <h3 className={cn('text-sm sm:text-base font-bold text-[var(--color-text-primary)] tracking-tight', className)} {...props}>
       {children}
     </h3>
   );
@@ -58,7 +58,7 @@ export const CardDescription: React.FC<React.HTMLAttributes<HTMLParagraphElement
   ...props
 }) => {
   return (
-    <p className={cn('text-xs text-slate-500 mt-0.5', className)} {...props}>
+    <p className={cn('text-xs text-[var(--color-text-secondary)] mt-0.5', className)} {...props}>
       {children}
     </p>
   );
@@ -83,7 +83,7 @@ export const CardFooter: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
 }) => {
   return (
     <div
-      className={cn('px-5 py-3.5 bg-slate-50/70 border-t border-slate-100 flex items-center justify-between', className)}
+      className={cn('px-5 py-3.5 bg-[var(--color-bg-main)]/60 border-t border-[var(--color-surface-muted)] flex items-center justify-between', className)}
       {...props}
     >
       {children}

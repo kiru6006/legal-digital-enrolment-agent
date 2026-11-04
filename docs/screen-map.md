@@ -53,3 +53,4 @@ This document maps every screen identifier from the **Bar Council of Tamil Nadu 
 | Screen ID | Route | Authorized Role | Priority | Implementation Component | Key UI Elements & Functional Scope |
 |---|---|---|---|---|---|
 | **ADM-01** | `#/admin`, `#/admin/users` | `IT Administrator` | **P1** | [`AdminUsers.tsx`](file:///Users/apple/projects/legal-digital-enrolment-agent/src/pages/admin/AdminUsers.tsx), [`AdminConfig.tsx`](file:///Users/apple/projects/legal-digital-enrolment-agent/src/pages/admin/AdminConfig.tsx), [`AdminChecklists.tsx`](file:///Users/apple/projects/legal-digital-enrolment-agent/src/pages/admin/AdminChecklists.tsx) | Proposed roles inventory with `PROPOSED ROLE` badge, statutory separation of concerns notice (IT Admin has zero legal decision authority), append-only audit trail viewer with CSV export, and checklist rule administration. |
+

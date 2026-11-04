@@ -35,3 +35,4 @@ All state transitions in AEMS are governed by strict role permissions, immutable
 2. **Document Version Immutability**: Any modification or correction to a submitted document creates an append-only new version (`v2`, `v3`). Previous versions (`v1`) remain accessible for judicial and audit scrutiny.
 3. **IT Admin Restriction**: Per BRD Section 15, IT Administrators possess system administration rights only and are programmatically blocked from making legal or scrutiny determinations.
 4. **Append-Only Audit Log**: Every transition writes an immutable audit record containing `timestamp`, `actorId`, `actorName`, `fromState`, `toState`, and `reason`.
+

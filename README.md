@@ -35,13 +35,13 @@ A dedicated interactive **Demo Script Guide** is embedded in the application top
 
 1. **Step 1: Applicant Portal — Review Status & Alerts**
    - Open **Applicant Portal** (`/applicant/dashboard`).
-   - Examine candidate Arjun Kumar's file (`AEMS-2026-00125`) showing *Correction Required* (55% progress) with two document action notices.
+   - Examine candidate Arjun Kumar's file (`AEMS-2026-1045`) showing *Action Required* with pending deficiency rectifications.
 2. **Step 2: Official Workstation — Work Queue & Prioritization**
    - Switch to **Enrolment Official** (`/officer/work-queue`).
    - Filter by high priority or search by candidate name to inspect the centralized digital docket.
 3. **Step 3: Digital Case File & AI Intake Scrutiny**
-   - Open Arjun Kumar's **Digital Case File** (`/officer/case/AEMS-2026-00125`).
-   - Click **Run AI Document Review** (`/officer/ai-review/AEMS-2026-00125`).
+   - Open Arjun Kumar's **Digital Case File** (`/officer/case/AEMS-2026-1045`).
+   - Click **Run AI Document Review** (`/officer/ai-review/AEMS-2026-1045`).
    - Demonstrate simulated OCR classification, confidence indicators (92%), and automated flagging of:
      - Blurry residential utility bill scan.
      - Name initial disparity ("Arjun K." on B.Com degree vs "Arjun Kumar" on LL.B).
@@ -62,7 +62,7 @@ A dedicated interactive **Demo Script Guide** is embedded in the application top
    - View the **AI Workload Reduction Benchmark** (`/officer/time-savings`) showing an illustrative **28 minutes saved per case (70% reduction)**.
 8. **Step 8: Statutory Enrolment Committee Decision**
    - Switch to **Committee Member** (`/committee/dashboard`).
-   - Open candidate dossier (`/committee/case/AEMS-2026-00125`).
+   - Open candidate dossier (`/committee/case/AEMS-2026-1045`).
    - Click **Record Statutory Decision** &rarr; select **Grant Enrolment (Approved)** &rarr; submit formal minute reference (`EC-MINUTES-2026/19`).
    - Notice the candidate file updates to **100% Complete &bull; Enrolment Approved**.
 
@@ -137,6 +137,27 @@ The repository includes a ready-to-run GitHub Actions workflow at `.github/workf
 | **Payment Gateway** | Simulated treasury challan reconciliation | SBI ePay / Bharatkosh treasury gateway integration |
 | **AI Inference** | Deterministic browser service engine | Document AI / Gemini Flash API running in a secure GovCloud sandbox |
 | **Persistence** | Browser `localStorage` with instant scenario reset | PostgreSQL / Cloud SQL with write-once audit logs and Cloud Storage for PDFs |
+
+---
+
+## 📚 Technical Specifications & Architecture Documentation
+
+The project includes complete engineering specifications, wireframe blueprints, and statutory requirements:
+
+| Document | Category / Tech Stack | Focus & Description |
+|---|---|---|
+| **[`TECH-SPEC-React-Vite-Tailwind-Frontend-MVP.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/TECH-SPEC-React-Vite-Tailwind-Frontend-MVP.md)** | **React 18 + Vite + Tailwind** | Master engineering specification for the client-side prototype, 8-screen inventory, state store, and acceptance scenario. |
+| **[`TECH-ARCH-FastAPI-Postgres-Temporal-Appendix-D.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/TECH-ARCH-FastAPI-Postgres-Temporal-Appendix-D.md)** | **FastAPI + PostgreSQL + Temporal.io** | Production backend architecture, JSON schema data models, RLS security policies, and enterprise IdP integration. |
+| **[`WORKFLOW-BPMN-Process-RACI-Appendix-C.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/WORKFLOW-BPMN-Process-RACI-Appendix-C.md)** | **BPMN 2.0 + RACI Matrix** | Multi-departmental process models, decision authorities, handoffs, and workload reduction metrics. |
+| **[`REQUIREMENTS-User-Stories-E2E-Scenarios-Appendix-B.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/REQUIREMENTS-User-Stories-E2E-Scenarios-Appendix-B.md)** | **Requirements & E2E Acceptance** | Detailed user stories (`US-APP`, `US-OFF`, `US-MGT`, `US-COM`) and the 10-step E2E verification scenario. |
+| **[`UI-UX-Wireframes-Screen-Specs-Appendix-A.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/UI-UX-Wireframes-Screen-Specs-Appendix-A.md)** | **UI / UX Wireframes** | Detailed visual wireframes and screen blueprints across all 3 user experiences. |
+| **[`UI-UX-HTML-Wireframes-Tokens-Spec.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/UI-UX-HTML-Wireframes-Tokens-Spec.md)** | **Design System & Layout** | HTML/CSS wireframes, typographic scales, design tokens, and accessibility contrast standards. |
+| **[`BRD-Master-Functional-Requirements.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/BRD-Master-Functional-Requirements.md)** | **Master Business Requirements** | Core statutory legal basis (Advocates Act, 1961), business requirements, and operational scope boundaries. |
+| **[`BRD-00-Master-Business-Proposal-Blueprint.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/BRD-00-Master-Business-Proposal-Blueprint.md)** | **Executive Blueprint** | Master business proposal and institutional modernization rationale for the Bar Council. |
+| **[`DELIVERY-Roadmap-SLA-Business-Case-Appendix-E.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/DELIVERY-Roadmap-SLA-Business-Case-Appendix-E.md)** | **Project Delivery & SLAs** | Phased rollout roadmap, team staffing model, turnaround SLA targets, and ROI business case. |
+| **[`docs/screen-map.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/screen-map.md)** | **Frontend Route & Screen Map** | Direct mapping from BRD Screen IDs (`APP-01..05`, `OFF-01..06`, etc.) to React components and routes. |
+| **[`docs/workflow-states.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/workflow-states.md)** | **State Machine Transition Table** | Pure 16-transition workflow state machine specification. |
+| **[`docs/production-path.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/production-path.md)** | **Production Migration Seam** | Technical blueprint for replacing prototype repositories with FastAPI REST adapters. |
 
 ---
 

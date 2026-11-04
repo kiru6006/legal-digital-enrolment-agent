@@ -67,3 +67,4 @@ The frontend application is structured around clean domain interfaces and servic
 | **AI Extraction & OCR** | Deterministic simulation (`aiDemoService.ts`) | Self-hosted Tesseract / AWS Textract OCR paired with enterprise Claude / Gemini models on private VPC endpoints |
 | **Audit Log Store** | Appended state array | Write-once-read-many (WORM) durable audit table with periodic cryptographic hash chain anchoring |
 | **Notifications** | In-app drawer simulation | Celery / RabbitMQ workers driving multi-channel delivery via Twilio SMS, SendGrid Email, and WebPush |
+

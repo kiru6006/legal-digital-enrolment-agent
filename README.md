@@ -142,8 +142,21 @@ The repository includes a ready-to-run GitHub Actions workflow at `.github/workf
 
 ## 📚 Technical Specifications & Architecture Documentation
 
-All technical documentation, engineering blueprints, wireframe specifications, and statutory requirements are organized under the [`docs/`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/) directory:
+All technical documentation, engineering blueprints, wireframe specifications, and statutory requirements are organized under the [`docs/`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/) directory following the **Spec-Driven Vibe Coding standard**:
 
+### Core Spec-Driven Control Documents
+| Document | Purpose | Stage |
+|---|---|---|
+| **[`docs/PRD.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/PRD.md)** | Product Requirements Document: Problem, personas, scope, and B7 acceptance criteria. | Planning |
+| **[`docs/ARCHITECTURE.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/ARCHITECTURE.md)** | Technical Architecture: Clean repository seam, HashRouter deep links, state stores. | Planning |
+| **[`docs/DESIGN.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/DESIGN.md)** | Design System: Color tokens, 36px control height, single-line toolbars, WCAG AA contrast. | Planning |
+| **[`docs/RULES.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/RULES.md)** | AI & Developer Operating Rules: Plan before build, AI never decides, token adherence. | Development |
+| **[`docs/TASKS.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/TASKS.md)** | Milestone & Task Tracker: Completed M1–M6 phases and remaining tasks. | Development |
+| **[`docs/DECISIONS.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/DECISIONS.md)** | Architecture Decision Records (ADRs): HashRouter, React 18+Vite, CSS token architecture. | Development |
+| **[`docs/MEMORY.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/MEMORY.md)** | Living Project Memory: Active branch, live demo URL, test accounts, recent fixes. | Development |
+| **[`docs/TEST_PLAN.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/TEST_PLAN.md)** | Test Plan: 5-step Arjun Kumar B7 walkthrough, cross-cutting theme & bilingual tests. | Testing |
+
+### Statutory Appendices & Blueprints
 | Document | Category / Tech Stack | Focus & Description |
 |---|---|---|
 | **[`docs/TECH-SPEC-React-Vite-Tailwind-Frontend-MVP.md`](file:///Users/apple/projects/legal-digital-enrolment-agent/docs/TECH-SPEC-React-Vite-Tailwind-Frontend-MVP.md)** | **React 18 + Vite + Tailwind** | Master engineering specification for the client-side prototype, screen inventory, state store, and acceptance scenario. |

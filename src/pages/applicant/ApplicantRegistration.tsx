@@ -413,3 +413,4 @@ export const ApplicantRegistration: React.FC = () => {
     </div>
   );
 };
+

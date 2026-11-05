@@ -22,6 +22,10 @@ import {
   Settings,
   ListChecks,
   Compass,
+  PanelLeftClose,
+  PanelLeftOpen,
+  X,
+  ChevronRight,
 } from 'lucide-react';
 import { useAEMS } from '../../store/applicationStore';
 import { PRIMARY_DEMO_APP_ID } from '../../data/mockApplications';
@@ -34,7 +38,19 @@ interface NavItem {
   badgeColor?: string;
 }
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
+  isMobileOpen: boolean;
+  onCloseMobile: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({
+  isCollapsed,
+  onToggleCollapse,
+  isMobileOpen,
+  onCloseMobile,
+}) => {
   const { currentRole, primaryApplication } = useAEMS();
   const location = useLocation();
 
@@ -121,75 +137,249 @@ export const Sidebar: React.FC = () => {
   const currentSection = roleSections[currentRole] || roleSections.applicant;
 
   return (
-    <aside className="w-64 bg-[var(--color-surface-white)] text-[var(--color-text-primary)] flex flex-col shrink-0 min-h-[calc(100vh-4rem)] border-r border-[var(--color-border)] shadow-xs">
-      {/* Module Title */}
-      <div className="px-5 py-4 border-b border-[var(--color-surface-muted)] flex items-center justify-between">
-        <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
-            Active Module
-          </span>
-          <h2 className="text-sm font-bold text-[var(--color-text-primary)] tracking-tight">{currentSection.title}</h2>
+    <>
+      {/* Mobile Backdrop Overlay */}
+      {isMobileOpen && (
+        <div
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 md:hidden transition-opacity duration-300"
+          onClick={onCloseMobile}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Main Sidebar Container */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 bg-[var(--color-surface-white)] text-[var(--color-text-primary)] flex flex-col shrink-0 min-h-[calc(100vh-4rem)] border-r border-[var(--color-border)] shadow-xs transition-all duration-300 ease-in-out md:static md:z-auto ${
+          isMobileOpen
+            ? 'translate-x-0 shadow-2xl w-64'
+            : '-translate-x-full md:translate-x-0'
+        } ${isCollapsed ? 'md:w-16' : 'md:w-64'}`}
+      >
+        {/* Header (Mobile View: with Close Button) */}
+        <div className="px-4 py-4 border-b border-[var(--color-surface-muted)] flex items-center justify-between md:hidden">
+          <div className="flex items-center gap-2 overflow-hidden">
+            <Compass className="w-4 h-4 text-[var(--google-blue-strong)] shrink-0" />
+            <span className="text-sm font-bold text-[var(--color-text-primary)] truncate">
+              {currentSection.title}
+            </span>
+          </div>
+          <button
+            onClick={onCloseMobile}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+            aria-label="Close navigation menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
-        <Compass className="w-4 h-4 text-[var(--google-blue-strong)]" />
-      </div>
 
-      {/* Nav List */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {currentSection.links.map((link) => {
-          const Icon = link.icon;
-          const isActive = location.pathname === link.to;
-
-          return (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-all cursor-pointer group ${
-                isActive
-                  ? 'bg-[var(--semantic-primary-soft)] text-[var(--google-blue-strong)] font-bold shadow-2xs'
-                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)] font-medium'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Icon
-                  className={`w-4 h-4 transition-colors ${
-                    isActive ? 'text-[var(--google-blue-strong)]' : 'text-[var(--color-text-muted)] group-hover:text-[var(--color-text-secondary)]'
-                  }`}
-                />
-                <span>{link.label}</span>
-              </div>
-              {link.badge && (
-                <span
-                  className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
-                    link.badgeColor === 'amber'
-                      ? 'bg-[var(--semantic-warning-soft)] text-[#B06000] border border-[#FEEFC3]'
-                      : link.badgeColor === 'violet'
-                      ? 'bg-[var(--semantic-ai-soft)] text-[var(--color-purple-dark)] border border-[#E9D5FF]'
-                      : 'bg-[var(--semantic-primary-soft)] text-[var(--google-blue-strong)]'
-                  }`}
-                >
-                  {link.badge}
+        {/* Header (Desktop View) */}
+        <div className="border-b border-[var(--color-surface-muted)] hidden md:block">
+          {!isCollapsed ? (
+            <div className="px-4 py-3.5 flex items-center justify-between">
+              <div className="overflow-hidden">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)] block truncate">
+                  Active Module
                 </span>
-              )}
-            </NavLink>
-          );
-        })}
-      </nav>
+                <h2 className="text-sm font-bold text-[var(--color-text-primary)] tracking-tight truncate">
+                  {currentSection.title}
+                </h2>
+              </div>
+              <button
+                onClick={onToggleCollapse}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+                title="Collapse sidebar (⌘B)"
+                aria-label="Collapse sidebar"
+              >
+                <PanelLeftClose className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="py-3 flex items-center justify-center">
+              <button
+                onClick={onToggleCollapse}
+                className="p-2 rounded-xl text-slate-500 hover:text-[var(--google-blue-strong)] hover:bg-[var(--semantic-primary-soft)] transition-colors cursor-pointer group relative"
+                title="Expand sidebar (⌘B)"
+                aria-label="Expand sidebar"
+              >
+                <PanelLeftOpen className="w-5 h-5" />
+                <div className="absolute left-full ml-2 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium rounded-md shadow-lg whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                  Expand sidebar (⌘B)
+                </div>
+              </button>
+            </div>
+          )}
+        </div>
 
-      {/* Primary Demo Scenario Indicator Card */}
-      <div className="p-3.5 m-3 bg-[var(--vignxs-soft)] rounded-xl border border-[var(--vignxs-pink-light)]">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="w-2 h-2 rounded-full bg-[var(--vignxs-crimson)] animate-pulse"></span>
-          <span className="text-[10px] font-bold text-[var(--vignxs-crimson)] uppercase tracking-wider">
-            Primary Demo Case
-          </span>
+        {/* Navigation Links */}
+        <nav className="flex-1 px-2.5 py-3 space-y-1 overflow-y-auto">
+          {currentSection.links.map((link) => {
+            const Icon = link.icon;
+            const isActive = location.pathname === link.to;
+
+            return (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                onClick={onCloseMobile}
+                className={`flex items-center rounded-xl text-xs transition-all cursor-pointer group relative ${
+                  isCollapsed
+                    ? 'justify-center p-2.5 md:px-0'
+                    : 'justify-between px-3 py-2.5'
+                } ${
+                  isActive
+                    ? 'bg-[var(--semantic-primary-soft)] text-[var(--google-blue-strong)] font-bold shadow-2xs'
+                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)] font-medium'
+                }`}
+              >
+                <div
+                  className={`flex items-center ${
+                    isCollapsed ? 'justify-center' : 'gap-3'
+                  } min-w-0`}
+                >
+                  <div className="relative shrink-0 flex items-center justify-center">
+                    <Icon
+                      className={`w-4 h-4 transition-colors ${
+                        isActive
+                          ? 'text-[var(--google-blue-strong)]'
+                          : 'text-[var(--color-text-muted)] group-hover:text-[var(--color-text-secondary)]'
+                      }`}
+                    />
+                    {/* Collapsed dot badge indicator */}
+                    {isCollapsed && link.badge && (
+                      <span
+                        className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ring-2 ring-white ${
+                          link.badgeColor === 'amber'
+                            ? 'bg-amber-500'
+                            : link.badgeColor === 'violet'
+                            ? 'bg-purple-500'
+                            : 'bg-blue-600'
+                        }`}
+                      />
+                    )}
+                  </div>
+                  {/* Label text */}
+                  <span className={`${isCollapsed ? 'md:hidden' : 'block'} truncate`}>
+                    {link.label}
+                  </span>
+                </div>
+
+                {/* Expanded Badge */}
+                {link.badge && (
+                  <span
+                    className={`${
+                      isCollapsed ? 'md:hidden' : 'inline-block'
+                    } text-[10px] px-1.5 py-0.5 rounded font-bold shrink-0 ${
+                      link.badgeColor === 'amber'
+                        ? 'bg-[var(--semantic-warning-soft)] text-[#B06000] border border-[#FEEFC3]'
+                        : link.badgeColor === 'violet'
+                        ? 'bg-[var(--semantic-ai-soft)] text-[var(--color-purple-dark)] border border-[#E9D5FF]'
+                        : 'bg-[var(--semantic-primary-soft)] text-[var(--google-blue-strong)]'
+                    }`}
+                  >
+                    {link.badge}
+                  </span>
+                )}
+
+                {/* Collapsed Tooltip on Desktop */}
+                {isCollapsed && (
+                  <div className="hidden md:flex absolute left-full ml-3 px-3 py-1.5 bg-slate-900 text-white text-xs font-semibold rounded-lg shadow-xl whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity items-center gap-2">
+                    <span>{link.label}</span>
+                    {link.badge && (
+                      <span
+                        className={`text-[10px] px-1.5 py-0.2 rounded font-bold ${
+                          link.badgeColor === 'amber'
+                            ? 'bg-amber-500 text-white'
+                            : link.badgeColor === 'violet'
+                            ? 'bg-purple-500 text-white'
+                            : 'bg-blue-600 text-white'
+                        }`}
+                      >
+                        {link.badge}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </NavLink>
+            );
+          })}
+        </nav>
+
+        {/* Primary Demo Scenario Indicator Card */}
+        {!isCollapsed ? (
+          <div className="p-3.5 m-3 bg-[var(--vignxs-soft)] rounded-xl border border-[var(--vignxs-pink-light)]">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-2 h-2 rounded-full bg-[var(--vignxs-crimson)] animate-pulse" />
+              <span className="text-[10px] font-bold text-[var(--vignxs-crimson)] uppercase tracking-wider">
+                Primary Demo Case
+              </span>
+            </div>
+            <p className="text-xs text-[var(--color-text-primary)] font-bold truncate">
+              {primaryApplication.applicantName}
+            </p>
+            <p className="text-[11px] text-[var(--color-text-secondary)] font-mono">
+              Ref: {PRIMARY_DEMO_APP_ID}
+            </p>
+            <div className="mt-2 pt-2 border-t border-[var(--vignxs-pink-light)] flex items-center justify-between text-[11px]">
+              <span className="text-[var(--color-text-secondary)]">Status:</span>
+              <span className="text-[var(--vignxs-crimson)] font-bold">
+                {primaryApplication.statusLabel}
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div className="p-2 m-2 hidden md:flex justify-center">
+            <div
+              className="w-10 h-10 rounded-xl bg-[var(--vignxs-soft)] border border-[var(--vignxs-pink-light)] flex flex-col items-center justify-center relative group cursor-pointer"
+              title={`Primary Demo: ${primaryApplication.applicantName} (${PRIMARY_DEMO_APP_ID}) - ${primaryApplication.statusLabel}`}
+            >
+              <span className="w-2 h-2 rounded-full bg-[var(--vignxs-crimson)] animate-pulse" />
+              <span className="text-[9px] font-bold text-[var(--vignxs-crimson)] mt-0.5">AK</span>
+              <div className="absolute left-full ml-3 p-3 bg-slate-900 text-white text-xs rounded-xl shadow-xl whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                <p className="font-bold">{primaryApplication.applicantName}</p>
+                <p className="text-[10px] text-slate-400 font-mono">Ref: {PRIMARY_DEMO_APP_ID}</p>
+                <p className="text-[10px] text-amber-400 mt-1 font-semibold">
+                  Status: {primaryApplication.statusLabel}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Bottom Expand / Collapse Toggle Bar (Desktop only) */}
+        <div className="border-t border-[var(--color-surface-muted)] hidden md:block">
+          {!isCollapsed ? (
+            <div className="p-2.5">
+              <button
+                onClick={onToggleCollapse}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+                title="Collapse sidebar (⌘B)"
+              >
+                <span className="flex items-center gap-2">
+                  <PanelLeftClose className="w-4 h-4 text-slate-400" />
+                  <span>Collapse Menu</span>
+                </span>
+                <kbd className="text-[10px] bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded text-slate-400 font-mono">
+                  ⌘B
+                </kbd>
+              </button>
+            </div>
+          ) : (
+            <div className="p-2 flex justify-center">
+              <button
+                onClick={onToggleCollapse}
+                className="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer group relative"
+                title="Expand menu (⌘B)"
+                aria-label="Expand menu"
+              >
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+                <div className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium rounded-md shadow-lg whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                  Expand Menu (⌘B)
+                </div>
+              </button>
+            </div>
+          )}
         </div>
-        <p className="text-xs text-[var(--color-text-primary)] font-bold truncate">Arjun Kumar</p>
-        <p className="text-[11px] text-[var(--color-text-secondary)] font-mono">Ref: {PRIMARY_DEMO_APP_ID}</p>
-        <div className="mt-2 pt-2 border-t border-[var(--vignxs-pink-light)] flex items-center justify-between text-[11px]">
-          <span className="text-[var(--color-text-secondary)]">Status:</span>
-          <span className="text-[var(--vignxs-crimson)] font-bold">{primaryApplication.statusLabel}</span>
-        </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 };

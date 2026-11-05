@@ -420,3 +420,4 @@ export const ApplicantChecklist: React.FC = () => {
     </div>
   );
 };
+

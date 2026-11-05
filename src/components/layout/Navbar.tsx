@@ -12,6 +12,7 @@ import {
   Gavel,
   ShieldCheck,
   CheckCircle2,
+  Menu,
 } from 'lucide-react';
 import { useAEMS } from '../../store/applicationStore';
 import { UserRole } from '../../types/user';
@@ -21,9 +22,16 @@ import { Badge } from '../common/Badge';
 interface NavbarProps {
   onOpenNotifications: () => void;
   onOpenWalkthrough: () => void;
+  onToggleSidebar?: () => void;
+  isSidebarCollapsed?: boolean;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenNotifications, onOpenWalkthrough }) => {
+export const Navbar: React.FC<NavbarProps> = ({
+  onOpenNotifications,
+  onOpenWalkthrough,
+  onToggleSidebar,
+  isSidebarCollapsed,
+}) => {
   const { currentRole, currentUser, switchRole, notifications, resetDemoScenario } = useAEMS();
   const navigate = useNavigate();
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
@@ -87,8 +95,19 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenNotifications, onOpenWalkt
 
       {/* Main Bar */}
       <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-        {/* Left: Brand with Vignxs Crimson Emblem */}
-        <div className="flex items-center gap-3">
+        {/* Left: Brand with Toggle Menu Button */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {onToggleSidebar && (
+            <button
+              onClick={onToggleSidebar}
+              className="p-2 -ml-1 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer flex items-center justify-center"
+              title={isSidebarCollapsed ? 'Expand sidebar (⌘B)' : 'Collapse sidebar (⌘B)'}
+              aria-label="Toggle navigation sidebar"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+          )}
+
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="w-10 h-10 rounded-xl bg-[var(--vignxs-crimson)] flex items-center justify-center text-white shadow-xs group-hover:bg-[var(--vignxs-crimson-deep)] transition-colors">
               <Scale className="w-5 h-5" />

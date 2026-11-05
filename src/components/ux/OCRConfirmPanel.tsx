@@ -168,3 +168,4 @@ export const OCRConfirmPanel: React.FC<OCRConfirmPanelProps> = ({
     </div>
   );
 };
+

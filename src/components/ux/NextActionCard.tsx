@@ -110,3 +110,4 @@ export const NextActionCard: React.FC<NextActionCardProps> = ({ currentLang = 'e
     </div>
   );
 };
+

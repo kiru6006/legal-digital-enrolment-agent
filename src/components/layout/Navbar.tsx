@@ -23,7 +23,9 @@ import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
 import { LanguageToggle } from '../ux/LanguageToggle';
 import { SaveStatus } from '../ux/SaveStatus';
+import { ThemeToggle } from '../ux/ThemeToggle';
 import { Language } from '../../services/i18nService';
+import { ThemeMode } from '../../services/themeService';
 
 interface NavbarProps {
   onOpenNotifications: () => void;
@@ -32,6 +34,8 @@ interface NavbarProps {
   isSidebarCollapsed?: boolean;
   currentLang?: Language;
   onLanguageChange?: (lang: Language) => void;
+  currentTheme?: ThemeMode;
+  onToggleTheme?: () => void;
   onOpenSearch?: () => void;
   onOpenShortcuts?: () => void;
 }
@@ -43,6 +47,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   isSidebarCollapsed,
   currentLang = 'en',
   onLanguageChange,
+  currentTheme = 'light',
+  onToggleTheme,
   onOpenSearch,
   onOpenShortcuts,
 }) => {
@@ -166,6 +172,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           {onLanguageChange && (
             <div className="hidden sm:block">
               <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
+            </div>
+          )}
+
+          {/* Dark / White Theme Switcher */}
+          {onToggleTheme && (
+            <div>
+              <ThemeToggle currentTheme={currentTheme} onToggleTheme={onToggleTheme} />
             </div>
           )}
 

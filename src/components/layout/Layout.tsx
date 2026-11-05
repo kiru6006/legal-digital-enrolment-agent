@@ -9,6 +9,7 @@ import { HelpFooter } from '../ux/HelpFooter';
 import { GlobalSearchModal } from '../ux/GlobalSearchModal';
 import { KeyboardShortcutsModal } from '../ux/KeyboardShortcutsModal';
 import { Language, getStoredLanguage, setStoredLanguage } from '../../services/i18nService';
+import { ThemeMode, getStoredTheme, applyTheme, toggleTheme } from '../../services/themeService';
 
 export const Layout: React.FC = () => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -16,12 +17,21 @@ export const Layout: React.FC = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
 
-  // Read initial language state
+  // Read initial theme and language state
   const [currentLang, setCurrentLang] = useState<Language>(getStoredLanguage());
+  const [currentTheme, setCurrentTheme] = useState<ThemeMode>(getStoredTheme);
+
+  useEffect(() => {
+    applyTheme(currentTheme);
+  }, [currentTheme]);
 
   const handleLanguageChange = (lang: Language) => {
     setCurrentLang(lang);
     setStoredLanguage(lang);
+  };
+
+  const handleToggleTheme = () => {
+    setCurrentTheme((prev) => toggleTheme(prev));
   };
 
   // Read initial collapse state from localStorage
@@ -78,6 +88,9 @@ export const Layout: React.FC = () => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b') {
         e.preventDefault();
         toggleCollapse();
+      } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        handleToggleTheme();
       } else if (e.key === '/' && !isInput) {
         e.preventDefault();
         setSearchOpen(true);
@@ -96,7 +109,7 @@ export const Layout: React.FC = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+    <div className="min-h-screen bg-[var(--color-bg-main)] text-[var(--color-text-primary)] flex flex-col font-sans transition-colors duration-150">
       <Navbar
         onOpenNotifications={() => setNotificationsOpen(true)}
         onOpenWalkthrough={() => setWalkthroughOpen(true)}
@@ -104,6 +117,8 @@ export const Layout: React.FC = () => {
         isSidebarCollapsed={isCollapsed}
         currentLang={currentLang}
         onLanguageChange={handleLanguageChange}
+        currentTheme={currentTheme}
+        onToggleTheme={handleToggleTheme}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenShortcuts={() => setShortcutsOpen(true)}
       />
@@ -129,11 +144,11 @@ export const Layout: React.FC = () => {
           <HelpFooter currentLang={currentLang} />
 
           {/* Institutional Copyright Footer */}
-          <footer className="py-3 px-6 border-t border-slate-200 bg-white text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2 mt-auto">
+          <footer className="py-3 px-6 border-t border-[var(--color-border)] bg-[var(--color-surface-white)] text-xs text-[var(--color-text-secondary)] flex flex-col sm:flex-row items-center justify-between gap-2 mt-auto">
             <p>
               <strong>AEMS</strong> | Bar Council of Tamil Nadu and Puducherry — Statutory Digital Enrolment Office.
             </p>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-[var(--color-text-muted)]">
               Interactive demonstration with simulated AI scrutiny &amp; mock state.
             </p>
           </footer>

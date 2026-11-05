@@ -230,3 +230,4 @@ export const HelpFooter: React.FC<HelpFooterProps> = ({ currentLang = 'en' }) =>
     </aside>
   );
 };
+

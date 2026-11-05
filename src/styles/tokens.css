@@ -79,3 +79,55 @@
   --radius: 0.75rem;
 }
 
+/* ==========================================================================
+   Dark Mode Tokens matching legal-professionals-agent
+   ========================================================================== */
+.dark {
+  --color-bg-main: #131417;
+  --color-surface-white: #1E2024;
+  --color-surface-muted: #282A2E;
+  --color-surface-dark: #111115;
+  --color-code-bg: #0D0E11;
+  --color-text-primary: #F1F3F4;
+  --color-text-secondary: #BDC1C6;
+  --color-text-muted: #80868B;
+  --color-border: #32353B;
+  --color-border-strong: #454950;
+  --color-table-row-border: #353840;
+
+  /* Dark mode soft backgrounds */
+  --semantic-primary-soft: #1C2D4B;
+  --semantic-success-soft: #173824;
+  --semantic-error-soft: #3D1C1B;
+  --semantic-warning-soft: #3D3215;
+  --semantic-ai-soft: #2D1A45;
+  --semantic-info-soft: #10333D;
+  --semantic-brand-soft: #38131D;
+  --semantic-neutral-soft: #282A2E;
+
+  --vignxs-hover: #291219;
+  --vignxs-selected: #3B1621;
+  --vignxs-soft: #2E151E;
+
+  /* Standard shadcn/ui mapped variables */
+  --background: var(--color-bg-main);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-surface-white);
+  --card-foreground: var(--color-text-primary);
+  --popover: var(--color-surface-white);
+  --popover-foreground: var(--color-text-primary);
+  --primary: var(--google-blue);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--color-surface-muted);
+  --secondary-foreground: var(--color-text-primary);
+  --muted: var(--color-surface-muted);
+  --muted-foreground: var(--color-text-muted);
+  --accent: var(--semantic-primary-soft);
+  --accent-foreground: var(--google-blue);
+  --destructive: var(--google-red);
+  --destructive-foreground: #FFFFFF;
+  --border: var(--color-border);
+  --input: var(--color-border);
+  --ring: var(--google-blue);
+}
+

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Keyboard, Check, AlertCircle, FileText, Search, PanelLeft, HelpCircle } from 'lucide-react';
+import { Keyboard, Check, AlertCircle, FileText, Search, PanelLeft, HelpCircle, Moon } from 'lucide-react';
 import { Modal } from '../common/Modal';
 
 interface KeyboardShortcutsModalProps {
@@ -14,6 +14,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
   const shortcuts = [
     { key: '/', desc: 'Open Global Search from any screen', icon: Search },
     { key: '?', desc: 'Open this Keyboard Shortcuts cheat sheet', icon: HelpCircle },
+    { key: '⌘D / Ctrl+D', desc: 'Toggle Dark / White Theme', icon: Moon },
     { key: '⌘B / Ctrl+B', desc: 'Toggle Sidebar Collapse & Expand', icon: PanelLeft },
     { key: 'J / K', desc: 'Navigate to Next / Previous case or document item', icon: Keyboard },
     { key: 'V', desc: 'Quick-Verify current document check (in Scrutiny)', icon: Check },
@@ -54,3 +55,4 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
     </Modal>
   );
 };
+

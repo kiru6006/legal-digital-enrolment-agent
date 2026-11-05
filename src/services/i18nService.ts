@@ -137,3 +137,4 @@ export const setStoredLanguage = (lang: Language): void => {
 export const t = (key: string, lang: Language = getStoredLanguage()): string => {
   return translations[lang]?.[key] || translations.en[key] || key;
 };
+

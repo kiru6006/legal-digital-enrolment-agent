@@ -77,3 +77,4 @@ export const HandoverBanner: React.FC<HandoverBannerProps> = ({
     </div>
   );
 };
+

@@ -58,6 +58,9 @@ export interface CommitteeDecision {
   meetingRef: string;
   memberName: string;
   date: string;
+  legalBasis?: string;
+  conditions?: string;
+  followUpOwner?: string;
 }
 
 export interface Appointment {
@@ -70,6 +73,22 @@ export interface Appointment {
   instructions?: string;
 }
 
+export interface EducationEntry {
+  id: string;
+  level: '10th' | '12th' | 'Diploma' | 'Undergraduate' | 'Postgraduate' | 'Law Degree';
+  institution: string;
+  boardOrUniversity: string;
+  passingYear: string;
+  percentageOrCgpa: string;
+  regularOrPrivate: 'Regular' | 'Private';
+  rollNumber: string;
+  cbseDetails?: {
+    schoolNumber?: string;
+    centreNumber?: string;
+    admitCardId?: string;
+  };
+}
+
 export interface EducationDetails {
   qualifyingDegree: string;
   qualifyingUniversity: string;
@@ -80,6 +99,123 @@ export interface EducationDetails {
   lawPassingYear: string;
   lawRollNumber: string;
   percentageOrCgpa: string;
+  courseDuration?: '3 Years' | '5 Years';
+  studyMode?: 'Regular Full-time' | 'Evening College';
+  mediumOfInstruction?: string;
+  englishCompulsorySubject?: boolean;
+  historyEntries?: EducationEntry[];
+}
+
+export interface EmploymentRecord {
+  id: string;
+  type: 'employment' | 'business';
+  companyOrOrg: string;
+  designationOrRole: string;
+  publicOrPrivate: 'Public Sector' | 'Private Enterprise' | 'Self-Employed';
+  fromDate: string;
+  toDate: string;
+  relievingLetterStatus: 'Uploaded' | 'Exempt' | 'Pending';
+  panMasked?: string;
+  reasonForLeaving?: string;
+}
+
+export interface TimelineGap {
+  id: string;
+  fromDate: string;
+  toDate: string;
+  durationMonths: number;
+  explanation: string;
+  affidavitUploaded: boolean;
+}
+
+export interface CriminalAntecedents {
+  hasPendingCases: boolean;
+  pendingCases?: Array<{
+    caseNumber: string;
+    court: string;
+    policeStation: string;
+    firNumber: string;
+    sections: string;
+    status: string;
+    documentRef?: string;
+  }>;
+  hasPreviousConvictions: boolean;
+  convictions?: Array<{
+    caseNumber: string;
+    court: string;
+    judgmentDate: string;
+    sections: string;
+    judgmentDocRef?: string;
+  }>;
+  reviewerObservations?: string;
+  reviewedBy?: string;
+  reviewTimestamp?: string;
+  reviewStatus?: 'RESTRICTED_REVIEWED' | 'PENDING_REVIEW';
+}
+
+export interface CharacterCertificateRef {
+  formNumber: 'Form VI' | 'Form VII';
+  advocateName: string;
+  enrolmentNumber: string;
+  placeOfPractice: string;
+  yearsOfPractice: number;
+  verifiedAgainstRegister: boolean;
+  certificateDocRef?: string;
+}
+
+export interface NewspaperNotice {
+  newspaperName: string;
+  publicationDate: string;
+  publishedName: string;
+  publishedAddress: string;
+  addressMatchStatus: 'Matched' | 'Discrepancy' | 'Pending';
+  scanUploaded: boolean;
+}
+
+export interface AffidavitRecord {
+  id: string;
+  type: 'Undertaking' | 'Other-State' | 'Study-Gap' | 'Identity-Affidavit' | 'Bar-Rule-49';
+  stampPaperValue: string;
+  executionDate: string;
+  place: string;
+  notaryName: string;
+  verified: boolean;
+  notes?: string;
+}
+
+export interface PhysicalVerification {
+  scheduledDate?: string;
+  attended: boolean;
+  originalDegreesChecked: boolean;
+  physicalIdentityVerified: boolean;
+  advocateRobingCompliant: boolean;
+  verifiedByOfficerId?: string;
+  verifiedOfficerName?: string;
+  verifiedAt?: string;
+  remarks?: string;
+  outcome: 'Cleared' | 'Deficient' | 'Pending';
+}
+
+export interface PaymentDetails {
+  feeCategory: string;
+  feeAmount: number;
+  challanNumber: string;
+  paymentMethod: 'Treasury Challan' | 'Online SBI ePay' | 'Fee Exemption (SC/ST)';
+  status: 'Reconciled' | 'Pending' | 'Exempt';
+  transactionDate: string;
+  receiptRef: string;
+}
+
+export interface CrossDocumentValidationItem {
+  id: string;
+  field: string;
+  appValue: string;
+  documentValue: string;
+  docName: string;
+  matchStatus: 'MATCHED' | 'MISMATCH' | 'MANUAL_CHECK' | 'RESOLVED';
+  ocrConfidence: number;
+  ruleRef: string;
+  explanation: string;
 }
 
 export interface ApplicationRecord {
@@ -92,6 +228,12 @@ export interface ApplicationRecord {
   gender: string;
   dob: string;
   aadhaarMasked?: string;
+  fatherName?: string;
+  fatherOccupation?: string;
+  maritalStatus?: 'Single' | 'Married' | 'Other';
+  bloodGroup?: string;
+  disabilityStatus?: boolean;
+  scStDeclarationForFee?: boolean;
   address: {
     doorNo: string;
     street: string;
@@ -107,7 +249,19 @@ export interface ApplicationRecord {
     previousDesignation?: string;
     organization?: string;
     relievingLetterAvailable?: boolean;
+    records?: EmploymentRecord[];
+    gaps?: TimelineGap[];
   };
+  criminalAntecedents?: CriminalAntecedents;
+  characterCertificates?: {
+    formVI: CharacterCertificateRef;
+    formVII: CharacterCertificateRef;
+  };
+  newspaperNotice?: NewspaperNotice;
+  affidavits?: AffidavitRecord[];
+  physicalVerification?: PhysicalVerification;
+  paymentDetails?: PaymentDetails;
+  crossDocumentValidations?: CrossDocumentValidationItem[];
   stage: ApplicationStage;
   statusLabel: string;
   priority: ApplicationPriority;
@@ -130,6 +284,7 @@ export interface ApplicationRecord {
     checklistTotal: number;
     potentialDiscrepancies: string[];
     summaryText: string;
+    recommendedAction?: string;
   };
 }
 
@@ -145,5 +300,3 @@ export interface AuditEvent {
   reason?: string;
   timestamp: string;
 }
-
-

@@ -9,7 +9,14 @@ export type BadgeVariant =
   | 'danger'
   | 'violet'
   | 'brand'
-  | 'neutral';
+  | 'neutral'
+  | 'blue'
+  | 'green'
+  | 'amber'
+  | 'red'
+  | 'purple'
+  | 'gray'
+  | 'outline';
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
@@ -32,6 +39,13 @@ export const Badge: React.FC<BadgeProps> = ({
     violet: 'bg-[var(--semantic-ai-soft)] text-[var(--color-purple-dark)] border-[#E9D5FF]',
     brand: 'bg-[var(--vignxs-soft)] text-[var(--vignxs-crimson)] border-[var(--vignxs-pink-light)]',
     neutral: 'bg-[var(--semantic-neutral-soft)] text-[var(--color-text-secondary)] border-[var(--color-border)]',
+    blue: 'bg-[var(--semantic-primary-soft)] text-[var(--google-blue-strong)] border-[#C2E7FF]',
+    green: 'bg-[var(--semantic-success-soft)] text-[var(--google-green-dark)] border-[#C4EED0]',
+    amber: 'bg-[var(--semantic-warning-soft)] text-[#B06000] border-[#FEEFC3]',
+    red: 'bg-[var(--semantic-error-soft)] text-[var(--google-red-dark)] border-[#FAD2CF]',
+    purple: 'bg-[var(--semantic-ai-soft)] text-[var(--color-purple-dark)] border-[#E9D5FF]',
+    gray: 'bg-[var(--semantic-neutral-soft)] text-[var(--color-text-secondary)] border-[var(--color-border)]',
+    outline: 'bg-transparent text-slate-700 border-slate-300',
   };
 
   const sizeStyles = {

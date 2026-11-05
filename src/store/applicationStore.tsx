@@ -100,8 +100,15 @@ interface ApplicationStoreContextType {
     appId: string,
     decision: 'approved' | 'deferred' | 'rejected' | 'clarification_required',
     observation: string,
-    meetingRef?: string
+    meetingRef?: string,
+    legalBasis?: string,
+    conditions?: string,
+    followUpOwner?: string
   ) => void;
+  updatePhysicalVerification: (appId: string, updates: Partial<import('../types/application').PhysicalVerification>) => void;
+  updateCriminalReview: (appId: string, observation: string, reviewerName: string) => void;
+  rescheduleAppointment: (appId: string, newDate: string, newTimeSlot: string) => void;
+  resolveCrossDocValidation: (appId: string, validationId: string) => void;
   reassignApplication: (appId: string, officerId: string, officerName: string) => void;
   forwardStage: (appId: string, nextStage: ApplicationStage, statusLabel: string) => void;
   markNotificationRead: (id: string) => void;
@@ -620,7 +627,10 @@ export const ApplicationStoreProvider: React.FC<{ children: React.ReactNode }> =
     appId: string,
     decision: 'approved' | 'deferred' | 'rejected' | 'clarification_required',
     observation: string,
-    meetingRef: string = 'EC-MINUTES-2026/19'
+    meetingRef: string = 'EC-MINUTES-2026/19',
+    legalBasis?: string,
+    conditions?: string,
+    followUpOwner?: string
   ) => {
     setApplications((prev) =>
       prev.map((app) => {
@@ -665,8 +675,127 @@ export const ApplicationStoreProvider: React.FC<{ children: React.ReactNode }> =
               meetingRef,
               memberName: currentUser.name,
               date: new Date().toISOString().replace('T', ' ').substring(0, 10),
+              legalBasis,
+              conditions,
+              followUpOwner,
             },
             timeline: [newTimelineEvent, ...app.timeline],
+            lastUpdated: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          };
+        }
+        return app;
+      })
+    );
+  };
+
+  // Physical Verification outcome
+  const updatePhysicalVerification = (
+    appId: string,
+    updates: Partial<import('../types/application').PhysicalVerification>
+  ) => {
+    setApplications((prev) =>
+      prev.map((app) => {
+        if (app.id === appId || app.refNumber === appId) {
+          const currentPv = app.physicalVerification || {
+            attended: false,
+            originalDegreesChecked: false,
+            physicalIdentityVerified: false,
+            advocateRobingCompliant: false,
+            outcome: 'Pending' as const,
+          };
+          const updatedPv = {
+            ...currentPv,
+            ...updates,
+            verifiedByOfficerId: currentUser.id,
+            verifiedOfficerName: currentUser.name,
+            verifiedAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          };
+          recordAuditEvent('PHYSICAL_VERIFICATION_UPDATED', app.id, {
+            reason: `Physical verification outcome: ${updatedPv.outcome}; Degrees: ${updatedPv.originalDegreesChecked ? 'Verified' : 'Pending'}; Robing: ${updatedPv.advocateRobingCompliant ? 'Compliant' : 'Non-compliant'}`,
+          });
+          return {
+            ...app,
+            physicalVerification: updatedPv,
+            lastUpdated: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          };
+        }
+        return app;
+      })
+    );
+  };
+
+  // Restricted Criminal Antecedents Scrutiny
+  const updateCriminalReview = (appId: string, observation: string, reviewerName: string) => {
+    setApplications((prev) =>
+      prev.map((app) => {
+        if (app.id === appId || app.refNumber === appId) {
+          const currentCa = app.criminalAntecedents || { hasPendingCases: false, hasPreviousConvictions: false };
+          const updatedCa = {
+            ...currentCa,
+            reviewerObservations: observation,
+            reviewedBy: reviewerName || currentUser.name,
+            reviewTimestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+            reviewStatus: 'RESTRICTED_REVIEWED' as const,
+          };
+          recordAuditEvent('CRIMINAL_ANTECEDENTS_REVIEWED', app.id, {
+            reason: observation,
+          });
+          return {
+            ...app,
+            criminalAntecedents: updatedCa,
+            lastUpdated: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          };
+        }
+        return app;
+      })
+    );
+  };
+
+  // Reschedule appointment
+  const rescheduleAppointment = (appId: string, newDate: string, newTimeSlot: string) => {
+    setApplications((prev) =>
+      prev.map((app) => {
+        if (app.id === appId || app.refNumber === appId) {
+          const currentAppt = app.appointment || {
+            id: `apt-${Date.now()}`,
+            location: 'Bar Council Council Hall, High Court Campus, Chennai',
+            type: 'Roll Signing Ceremony',
+            status: 'scheduled' as const,
+          };
+          const updatedAppt: import('../types/application').Appointment = {
+            ...currentAppt,
+            date: newDate,
+            timeSlot: newTimeSlot,
+            status: 'rescheduled' as const,
+          };
+          recordAuditEvent('APPOINTMENT_RESCHEDULED', app.id, {
+            reason: `Rescheduled to ${newDate} at ${newTimeSlot}`,
+          });
+          return {
+            ...app,
+            appointment: updatedAppt,
+            lastUpdated: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          };
+        }
+        return app;
+      })
+    );
+  };
+
+  // Resolve cross-document validation discrepancy
+  const resolveCrossDocValidation = (appId: string, validationId: string) => {
+    setApplications((prev) =>
+      prev.map((app) => {
+        if (app.id === appId || app.refNumber === appId) {
+          const updatedCdvs = (app.crossDocumentValidations || []).map((cdv) =>
+            cdv.id === validationId ? { ...cdv, matchStatus: 'RESOLVED' as const } : cdv
+          );
+          recordAuditEvent('CROSS_DOC_DISCREPANCY_RESOLVED', app.id, {
+            reason: `Validation ID ${validationId} marked RESOLVED following official review`,
+          });
+          return {
+            ...app,
+            crossDocumentValidations: updatedCdvs,
             lastUpdated: new Date().toISOString().replace('T', ' ').substring(0, 16),
           };
         }
@@ -715,6 +844,10 @@ export const ApplicationStoreProvider: React.FC<{ children: React.ReactNode }> =
         updateVerificationItem,
         runAIReviewForApp,
         recordCommitteeDecision,
+        updatePhysicalVerification,
+        updateCriminalReview,
+        rescheduleAppointment,
+        resolveCrossDocValidation,
         reassignApplication,
         forwardStage,
         markNotificationRead,

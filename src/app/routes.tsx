@@ -7,6 +7,8 @@ import { LandingPage } from '../pages/landing/LandingPage';
 
 // Applicant Pages
 import { ApplicantDashboard } from '../pages/applicant/ApplicantDashboard';
+import { ApplicantRegistration } from '../pages/applicant/ApplicantRegistration';
+import { ApplicantChecklist } from '../pages/applicant/ApplicantChecklist';
 import { NewApplication } from '../pages/applicant/NewApplication';
 import { ApplicationDetails } from '../pages/applicant/ApplicationDetails';
 import { DocumentCorrection } from '../pages/applicant/DocumentCorrection';
@@ -50,6 +52,9 @@ export const AppRoutes: React.FC = () => {
         {/* Applicant Module (APP-01..APP-05) */}
         <Route path="applicant">
           <Route path="dashboard" element={<ApplicantDashboard />} />
+          <Route path="register" element={<ApplicantRegistration />} />
+          <Route path="registration" element={<ApplicantRegistration />} />
+          <Route path="checklist" element={<ApplicantChecklist />} />
           <Route path="application" element={<NewApplication />} />
           <Route path="new-application" element={<NewApplication />} />
           <Route path="application/:id" element={<ApplicationDetails />} />
@@ -65,6 +70,7 @@ export const AppRoutes: React.FC = () => {
           <Route path="dashboard" element={<OfficerDashboard />} />
           <Route path="work" element={<WorkQueue />} />
           <Route path="work-queue" element={<WorkQueue />} />
+          <Route path="work-buckets" element={<WorkQueue />} />
           <Route path="case/:id" element={<DigitalCaseFile />} />
           <Route path="case/:id/ai" element={<AIDocumentReview />} />
           <Route path="case/:id/deficiency" element={<DeficiencyManagement />} />
@@ -97,6 +103,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="committee">
           <Route path="dashboard" element={<CommitteeDashboard />} />
           <Route path="case/:id" element={<CommitteeCaseReview />} />
+          <Route path="review/:id" element={<CommitteeCaseReview />} />
           <Route path="meeting-pack" element={<MeetingPack />} />
           <Route index element={<CommitteeDashboard />} />
         </Route>

@@ -40,6 +40,8 @@ export const Sidebar: React.FC = () => {
 
   const applicantLinks: NavItem[] = [
     { to: '/applicant/dashboard', label: 'My Dashboard', icon: LayoutDashboard },
+    { to: '/applicant/register', label: 'Candidate Registration (A01)', icon: Compass },
+    { to: '/applicant/checklist', label: '11-Doc Checklist & Pass (A03)', icon: ListChecks },
     { to: '/applicant/new-application', label: 'New Application', icon: FilePlus },
     {
       to: `/applicant/application/${PRIMARY_DEMO_APP_ID}`,

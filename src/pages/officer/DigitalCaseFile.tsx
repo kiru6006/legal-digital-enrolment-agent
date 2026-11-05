@@ -17,6 +17,16 @@ import {
   Download,
   AlertTriangle,
   RotateCw,
+  Building,
+  GraduationCap,
+  Scale,
+  Shield,
+  CreditCard,
+  UserCheck,
+  Check,
+  ExternalLink,
+  Lock,
+  Unlock,
 } from 'lucide-react';
 import { useAEMS } from '../../store/applicationStore';
 import { PRIMARY_DEMO_APP_ID } from '../../data/mockApplications';
@@ -36,9 +46,13 @@ export const DigitalCaseFile: React.FC = () => {
     raiseDeficiency,
     resolveDeficiency,
     updateVerificationItem,
+    updatePhysicalVerification,
+    updateCriminalReview,
+    resolveCrossDocValidation,
     runAIReviewForApp,
     forwardStage,
     isAIProcessing,
+    currentUser,
   } = useAEMS();
   const navigate = useNavigate();
 
@@ -47,7 +61,18 @@ export const DigitalCaseFile: React.FC = () => {
 
   // Tabs state
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'details' | 'documents' | 'ai_review' | 'verification' | 'deficiencies' | 'history' | 'decision'
+    | 'overview'
+    | 'details'
+    | 'documents'
+    | 'ai_review'
+    | 'cross_doc'
+    | 'academic_desk'
+    | 'criminal_desk'
+    | 'physical_desk'
+    | 'payment_desk'
+    | 'deficiencies'
+    | 'history'
+    | 'decision'
   >('overview');
 
   // Modal: Raise Deficiency
@@ -61,20 +86,32 @@ export const DigitalCaseFile: React.FC = () => {
   // Modal: Document Preview
   const [previewDoc, setPreviewDoc] = useState<any | null>(null);
 
+  // Restricted Criminal Scrutiny Unlock State
+  const [criminalUnlocked, setCriminalUnlocked] = useState(false);
+  const [officerCriminalRemarks, setOfficerCriminalRemarks] = useState(
+    application.criminalAntecedents?.reviewerObservations ||
+      'No adverse moral turpitude antecedents found. Disclosed case verified as compoundable minor traffic incident.'
+  );
+  const [criminalSavedMsg, setCriminalSavedMsg] = useState(false);
+
   // Template autofill helper
   const handleApplyTemplate = (type: 'address_scan' | 'name_disparity' | 'provisional_degree') => {
     if (type === 'address_scan') {
       const doc = application.documents.find((d) => d.category === 'address_proof') || application.documents[0];
       setSelectedDocId(doc.id);
       setDefReason('Residential address proof scan is blurred and authority seal is truncated.');
-      setDefObservation('Document image fails 200 DPI minimum clarity. Consumer receipt address line 2 is cut off at the right margin.');
+      setDefObservation(
+        'Document image fails 200 DPI minimum clarity. Consumer receipt address line 2 is cut off at the right margin.'
+      );
       setDefCorrection('Upload a crisp, high-resolution original PDF or 300 DPI color scan of recent utility proof.');
       setNoticePreview(aiDemoService.draftDeficiencyNotice(doc.name, 'Document image blurred and seal cropped out.', application));
     } else if (type === 'name_disparity') {
       const doc = application.documents.find((d) => d.category === 'degree_certificate') || application.documents[0];
       setSelectedDocId(doc.id);
       setDefReason('Name initial variation between undergraduate degree and Law enrolment application.');
-      setDefObservation('Qualifying degree displays "Arjun K." while statutory enrolment form and Aadhaar record "Arjun Kumar".');
+      setDefObservation(
+        'Qualifying degree displays "Arjun K." while statutory enrolment form and Aadhaar record "Arjun Kumar".'
+      );
       setDefCorrection('Furnish a sworn affirmation / one-and-the-same identity affidavit executed before a Notary Public.');
       setNoticePreview(aiDemoService.draftDeficiencyNotice(doc.name, 'Candidate name initial discrepancy detected.', application));
     } else {
@@ -109,7 +146,12 @@ export const DigitalCaseFile: React.FC = () => {
 
   const handleRunAI = async () => {
     await runAIReviewForApp(application.id);
-    setActiveTab('ai_review');
+  };
+
+  const handleSaveCriminalRemarks = () => {
+    updateCriminalReview(application.id, officerCriminalRemarks, currentUser.name);
+    setCriminalSavedMsg(true);
+    setTimeout(() => setCriminalSavedMsg(false), 3000);
   };
 
   const openDeficiencies = application.deficiencies.filter((d) => d.status === 'open');
@@ -117,36 +159,33 @@ export const DigitalCaseFile: React.FC = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      {/* Case Header */}
+      {/* Top Banner */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-              {application.refNumber}
-            </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="blue" className="text-xs uppercase tracking-wider">
+              Digital Case File • Screen O05
+            </Badge>
+            <span className="text-xs font-mono text-slate-500 font-bold">{application.refNumber}</span>
             <Badge
               variant={
-                application.stage === 'completed'
-                  ? 'success'
+                application.stage === 'committee_review'
+                  ? 'violet'
                   : application.stage === 'correction_requested'
-                  ? 'warning'
-                  : 'primary'
+                  ? 'amber'
+                  : 'blue'
               }
             >
               {application.statusLabel}
             </Badge>
-            <span className="text-xs text-slate-400">
-              Assigned: <strong>{application.assignedOfficerName}</strong>
-            </span>
+            <Badge variant={application.priority === 'critical' ? 'red' : 'gray'}>
+              Priority: {application.priority.toUpperCase()}
+            </Badge>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <span>{application.applicantName}</span>
-            <span className="text-sm font-normal text-slate-400">
-              ({application.education.lawDegree})
-            </span>
-          </h1>
+          <h1 className="text-2xl font-bold text-slate-900">{application.applicantName}</h1>
           <p className="text-xs text-slate-500">
-            {application.education.lawCollege} &bull; Roll: {application.education.lawRollNumber} &bull; Submitted: {application.submissionDate}
+            Assigned Scrutiny Officer: <strong>{application.assignedOfficerName || 'M. Srinivasan'}</strong> &bull; Submitted:{' '}
+            {application.submissionDate} &bull; Stream: 3-Year LL.B (TNDALU)
           </p>
         </div>
 
@@ -172,26 +211,30 @@ export const DigitalCaseFile: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Two-Column Layout: Left (Tabs), Right (Action Panel) */}
+      {/* Main Two-Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left Column (3 cols): Tabs & Content */}
         <div className="lg:col-span-3 space-y-4">
-          {/* Tabs Navigation */}
+          {/* Specialized Tabs Navigation */}
           <div className="bg-white rounded-xl border border-slate-200 p-1 flex items-center gap-1 overflow-x-auto text-xs font-semibold">
             {[
               { id: 'overview', label: 'Overview', icon: FileText },
-              { id: 'details', label: 'Applicant Details', icon: User },
-              { id: 'documents', label: `Documents (${application.documents.length})`, icon: Eye },
+              { id: 'details', label: 'Details', icon: User },
+              { id: 'documents', label: `Docs (${application.documents.length})`, icon: Eye },
               { id: 'ai_review', label: 'AI Review', icon: Sparkles, badge: 'AI' },
-              { id: 'verification', label: 'Verification', icon: ShieldCheck },
+              { id: 'cross_doc', label: 'Cross-Doc Matrix', icon: Scale },
+              { id: 'academic_desk', label: 'College Check', icon: GraduationCap },
+              { id: 'criminal_desk', label: 'Criminal Scrutiny', icon: Shield, badge: 'Restricted' },
+              { id: 'physical_desk', label: 'Physical Robing', icon: UserCheck },
+              { id: 'payment_desk', label: 'Treasury/Fee', icon: CreditCard },
               {
                 id: 'deficiencies',
-                label: `Deficiencies (${application.deficiencies.length})`,
+                label: `Defects (${application.deficiencies.length})`,
                 icon: AlertCircle,
-                badge: openDeficiencies.length > 0 ? `${openDeficiencies.length} Open` : undefined,
+                badge: openDeficiencies.length > 0 ? `${openDeficiencies.length}` : undefined,
               },
-              { id: 'history', label: 'Activity History', icon: History },
-              { id: 'decision', label: 'Decision Record', icon: Gavel },
+              { id: 'history', label: 'History', icon: History },
+              { id: 'decision', label: 'Decision', icon: Gavel },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -214,6 +257,8 @@ export const DigitalCaseFile: React.FC = () => {
                           ? 'bg-blue-800 text-white'
                           : tab.badge === 'AI'
                           ? 'bg-purple-100 text-purple-700'
+                          : tab.badge === 'Restricted'
+                          ? 'bg-rose-100 text-rose-700'
                           : 'bg-amber-100 text-amber-800'
                       }`}
                     >
@@ -278,280 +323,642 @@ export const DigitalCaseFile: React.FC = () => {
               {/* Case Summary Card */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm">Application Summary &amp; Scrutiny Synopsis</CardTitle>
+                  <CardTitle className="text-sm">Enrolment Application Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-xs">
-                  <div className="grid grid-cols-2 gap-4 p-3 bg-slate-50 rounded-xl">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-3 border-b border-slate-100">
                     <div>
-                      <p className="text-slate-500">Applicant Full Name:</p>
-                      <p className="font-semibold text-slate-900">{application.applicantName}</p>
+                      <span className="text-slate-400 font-medium">Candidate Name:</span>
+                      <p className="font-bold text-slate-900">{application.applicantName}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Qualifying Degree:</p>
-                      <p className="font-semibold text-slate-900">
-                        {application.education.qualifyingDegree} ({application.education.qualifyingPassingYear})
-                      </p>
+                      <span className="text-slate-400 font-medium">Date of Birth / Age:</span>
+                      <p className="font-semibold text-slate-900">{application.dob} (27 Years)</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Law Qualification:</p>
-                      <p className="font-semibold text-slate-900">
-                        {application.education.lawDegree} &bull; {application.education.lawUniversity}
-                      </p>
+                      <span className="text-slate-400 font-medium">Contact Phone:</span>
+                      <p className="font-semibold text-slate-900 font-mono">{application.phone}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Bar Rule 49 Declaration:</p>
-                      <p className="font-semibold text-emerald-700">Confirmed (Not in commercial employment)</p>
+                      <span className="text-slate-400 font-medium">Email ID:</span>
+                      <p className="font-semibold text-slate-900 truncate">{application.email}</p>
                     </div>
                   </div>
 
-                  {application.aiReviewSummary && (
-                    <div className="p-3 bg-purple-50/70 border border-purple-200 rounded-xl space-y-1">
-                      <div className="flex items-center gap-1.5 text-purple-950 font-bold text-xs">
-                        <Sparkles className="w-4 h-4 text-purple-600" />
-                        <span>AI Scrutiny Synopsis ({Math.round(application.aiReviewSummary.overallConfidence * 100)}% Confidence)</span>
-                      </div>
-                      <p className="text-purple-900 text-xs leading-relaxed">
-                        {application.aiReviewSummary.summaryText}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-slate-400 font-medium">Residential Jurisdiction:</span>
+                      <p className="text-slate-800 mt-0.5">
+                        {application.address.doorNo}, {application.address.street}, {application.address.locality},{' '}
+                        {application.address.city} - {application.address.pincode}
                       </p>
                     </div>
-                  )}
+                    <div>
+                      <span className="text-slate-400 font-medium">Qualifying Law Degree:</span>
+                      <p className="text-slate-800 font-semibold mt-0.5">
+                        {application.education.lawDegree} ({application.education.lawPassingYear})
+                      </p>
+                      <p className="text-slate-500 text-[11px]">
+                        {application.education.lawCollege} &bull; Roll: {application.education.lawRollNumber}
+                      </p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
+
+              {/* AI Brief Alert */}
+              {application.aiReviewSummary && (
+                <div className="p-4 bg-purple-50/70 border border-purple-200 rounded-xl space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-purple-900 flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-purple-600" />
+                      SIMULATED AI INTAKE SUMMARY &bull; CONFIDENCE: {Math.round(application.aiReviewSummary.overallConfidence * 100)}%
+                    </span>
+                    <Badge variant="purple" className="text-[10px]">
+                      {(application.aiReviewSummary.recommendedAction || 'Scrutiny Recommended').toUpperCase()}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-purple-950 leading-relaxed">
+                    {application.aiReviewSummary.summaryText}
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
-          {/* TAB 2: APPLICANT DETAILS */}
+          {/* TAB 2: DETAILS */}
           {activeTab === 'details' && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Complete Candidate Profile</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-xs">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-bold text-slate-900 border-b pb-1">Demographics &amp; Contact</h4>
-                    <p><strong>Name:</strong> {application.applicantName}</p>
-                    <p><strong>Gender:</strong> {application.gender}</p>
-                    <p><strong>DOB:</strong> {application.dob}</p>
-                    <p><strong>Email:</strong> {application.email}</p>
-                    <p><strong>Phone:</strong> {application.phone}</p>
-                    <p><strong>Aadhaar:</strong> {application.aadhaarMasked}</p>
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">4-Tier Academic Chain Verification</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="divide-y divide-slate-100 text-xs">
+                    {(application.education.historyEntries || []).map((entry) => (
+                      <div key={entry.id} className="p-4 flex items-center justify-between hover:bg-slate-50">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-slate-900">{entry.level}</span>
+                            <Badge variant="gray" className="text-[10px]">
+                              {entry.regularOrPrivate}
+                            </Badge>
+                            <span className="text-slate-400 font-mono text-[10px]">Roll: {entry.rollNumber}</span>
+                          </div>
+                          <p className="text-slate-600">{entry.institution}</p>
+                          <p className="text-slate-400 text-[11px]">{entry.boardOrUniversity}</p>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-sm font-bold text-blue-700">{entry.percentageOrCgpa}</span>
+                          <p className="text-slate-400 text-[11px]">Passed: {entry.passingYear}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+                </CardContent>
+              </Card>
 
-                  <div className="space-y-2">
-                    <h4 className="font-bold text-slate-900 border-b pb-1">Residential Address</h4>
-                    <p><strong>Door No:</strong> {application.address.doorNo}</p>
-                    <p><strong>Street:</strong> {application.address.street}</p>
-                    <p><strong>City / Dist:</strong> {application.address.city}, {application.address.district}</p>
-                    <p><strong>Pincode:</strong> {application.address.pincode}</p>
-                    <p><strong>State:</strong> {application.address.state}</p>
-                  </div>
-                </div>
+              {/* Character Certificates */}
+              {application.characterCertificates && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">Form VI &amp; VII Character Certificates</CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-slate-800">Form VI (Senior Advocate)</span>
+                        <Badge variant="green" className="text-[10px]">Verified Roll</Badge>
+                      </div>
+                      <p className="text-slate-900 font-medium">
+                        {application.characterCertificates.formVI.advocateName}
+                      </p>
+                      <p className="text-slate-500 text-[11px]">
+                        Enrolment: {application.characterCertificates.formVI.enrolmentNumber} &bull; Practice:{' '}
+                        {application.characterCertificates.formVI.yearsOfPractice} yrs
+                      </p>
+                    </div>
 
-                <div className="pt-2 border-t space-y-2">
-                  <h4 className="font-bold text-slate-900 border-b pb-1">Academic Credentials</h4>
-                  <p><strong>Law Degree:</strong> {application.education.lawDegree}</p>
-                  <p><strong>Law College:</strong> {application.education.lawCollege}</p>
-                  <p><strong>University:</strong> {application.education.lawUniversity}</p>
-                  <p><strong>Passing Year:</strong> {application.education.lawPassingYear}</p>
-                  <p><strong>University Roll No:</strong> {application.education.lawRollNumber}</p>
-                  <p><strong>Qualifying Degree:</strong> {application.education.qualifyingDegree} ({application.education.qualifyingUniversity})</p>
-                </div>
-              </CardContent>
-            </Card>
+                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-slate-800">Form VII (Practicing Advocate)</span>
+                        <Badge variant="green" className="text-[10px]">Verified Roll</Badge>
+                      </div>
+                      <p className="text-slate-900 font-medium">
+                        {application.characterCertificates.formVII.advocateName}
+                      </p>
+                      <p className="text-slate-500 text-[11px]">
+                        Enrolment: {application.characterCertificates.formVII.enrolmentNumber} &bull; Practice:{' '}
+                        {application.characterCertificates.formVII.yearsOfPractice} yrs
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           )}
 
           {/* TAB 3: DOCUMENTS */}
           {activeTab === 'documents' && (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between w-full">
-                  <CardTitle className="text-sm">Document Repository ({application.documents.length} Files)</CardTitle>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setDeficiencyModalOpen(true)}
-                    icon={<AlertCircle className="w-3.5 h-3.5 text-amber-600" />}
-                  >
-                    Raise Deficiency on Document
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="divide-y divide-slate-100 p-0 text-xs">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-3">
                 {application.documents.map((doc) => (
-                  <div key={doc.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
-                    <div className="space-y-1 max-w-lg">
+                  <div
+                    key={doc.id}
+                    className="p-4 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs"
+                  >
+                    <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-slate-900">{doc.name}</span>
-                        <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-mono">
+                        <Badge variant="gray" className="text-[10px]">
                           v{doc.version}
-                        </span>
-                        {doc.aiConfidence && (
-                          <span className="text-[10px] text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded font-semibold">
-                            AI: {Math.round(doc.aiConfidence * 100)}%
-                          </span>
-                        )}
+                        </Badge>
+                        <Badge
+                          variant={
+                            doc.status === 'verified'
+                              ? 'green'
+                              : doc.status === 'correction_required'
+                              ? 'red'
+                              : 'amber'
+                          }
+                          className="text-[10px]"
+                        >
+                          {doc.status.replace('_', ' ').toUpperCase()}
+                        </Badge>
                       </div>
-                      <p className="text-[11px] text-slate-500">{doc.fileName} &bull; {doc.fileSize}</p>
+                      <p className="text-slate-500 text-[11px] font-mono">
+                        {doc.fileName} &bull; {doc.fileSize} &bull; Uploaded {doc.uploadedAt}
+                      </p>
                       {doc.discrepancies && doc.discrepancies.length > 0 && (
-                        <p className="text-[11px] text-rose-600 font-medium">Flag: {doc.discrepancies[0]}</p>
+                        <p className="text-amber-800 text-[11px] font-medium bg-amber-50 px-2 py-0.5 rounded inline-block">
+                          Flag: {doc.discrepancies[0]}
+                        </p>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        size="sm"
-                        variant={
-                          doc.status === 'verified'
-                            ? 'success'
-                            : doc.status === 'correction_required'
-                            ? 'danger'
-                            : doc.status === 'correction_submitted'
-                            ? 'primary'
-                            : 'warning'
-                        }
-                      >
-                        {doc.status.replace('_', ' ')}
-                      </Badge>
+                    <div className="flex items-center gap-2 shrink-0">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => setPreviewDoc(doc)}
                         icon={<Eye className="w-3.5 h-3.5" />}
                       >
-                        Inspect
+                        Inspect Scan
                       </Button>
+                      {doc.status !== 'verified' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedDocId(doc.id);
+                            setDefReason(`Defect noticed on ${doc.name}`);
+                            setDeficiencyModalOpen(true);
+                          }}
+                          className="text-amber-700 border-amber-300 hover:bg-amber-50"
+                        >
+                          Raise Defect
+                        </Button>
+                      )}
                     </div>
                   </div>
                 ))}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
           {/* TAB 4: AI REVIEW */}
           {activeTab === 'ai_review' && (
-            <div className="space-y-4">
-              <div className="p-4 bg-purple-50/60 border border-purple-200 rounded-xl flex items-start justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-purple-600 text-white shrink-0">
-                    <Sparkles className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-bold text-purple-950">
-                      Simulated Legal Document Intake &amp; Classification Engine
-                    </h3>
-                    <p className="text-xs text-purple-900/80 mt-0.5 leading-relaxed">
-                      AI classifies documents, extracts roll numbers and university names via OCR, and flags variations against the statutory checklist.
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="ai"
-                  size="sm"
-                  isLoading={isAIProcessing}
-                  onClick={handleRunAI}
-                  icon={<RotateCw className="w-3.5 h-3.5" />}
-                  className="shrink-0"
-                >
-                  Run Scrutiny Scan
-                </Button>
-              </div>
-
-              {/* Cross Document Comparison Table */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm">Cross-Document Field Consistency Matrix</CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="overflow-x-auto text-xs">
-                    <table className="w-full text-left">
-                      <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold">
-                        <tr>
-                          <th className="py-2.5 px-4">Field Attribute</th>
-                          <th className="py-2.5 px-4">Application Form Entry</th>
-                          <th className="py-2.5 px-4">Extracted Credential Value</th>
-                          <th className="py-2.5 px-4">Match Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {aiDemoService.crossDocumentComparison(application).map((item, idx) => (
-                          <tr key={idx} className="hover:bg-slate-50">
-                            <td className="py-2.5 px-4 font-semibold text-slate-900">{item.attribute}</td>
-                            <td className="py-2.5 px-4 text-slate-700">{item.formValue}</td>
-                            <td className="py-2.5 px-4 text-slate-700 font-mono text-[11px]">{item.documentValue}</td>
-                            <td className="py-2.5 px-4">
-                              <Badge
-                                size="sm"
-                                variant={
-                                  item.status === 'exact_match'
-                                    ? 'success'
-                                    : item.status === 'fuzzy_match'
-                                    ? 'warning'
-                                    : 'danger'
-                                }
-                              >
-                                {item.status.replace('_', ' ')}
-                              </Badge>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
-          {/* TAB 5: VERIFICATION CHECKLIST */}
-          {activeTab === 'verification' && (
             <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Statutory Verification Checklist</CardTitle>
+              <CardHeader className="pb-3 border-b border-slate-100">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-600" />
+                    Automated Intake Scrutiny (SIMULATED AI)
+                  </CardTitle>
+                  <Badge variant="purple" className="text-[10px]">
+                    Non-Decisional Assistive Only
+                  </Badge>
+                </div>
               </CardHeader>
-              <CardContent className="divide-y divide-slate-100 p-0 text-xs">
-                {application.verificationItems.map((item) => (
-                  <div key={item.id} className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-slate-50">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-slate-900">{item.name}</span>
-                        <span className="text-[10px] text-slate-400 font-mono">[{item.category}]</span>
-                      </div>
-                      {item.remarks && (
-                        <p className="text-[11px] text-slate-600">{item.remarks}</p>
-                      )}
-                      {item.verifiedBy && (
-                        <p className="text-[10px] text-slate-400">
-                          Verified by {item.verifiedBy} on {item.verifiedAt}
-                        </p>
-                      )}
+              <CardContent className="pt-4 space-y-4 text-xs">
+                {application.aiReviewSummary ? (
+                  <>
+                    <div className="p-4 bg-purple-50/70 border border-purple-200 rounded-xl space-y-2">
+                      <p className="font-semibold text-purple-950">Intake Assessment:</p>
+                      <p className="text-purple-900 leading-relaxed">
+                        {application.aiReviewSummary.summaryText}
+                      </p>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <select
-                        value={item.status}
-                        onChange={(e) =>
-                          updateVerificationItem(
-                            application.id,
-                            item.id,
-                            e.target.value as VerificationStatus
-                          )
-                        }
-                        className="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-medium"
-                      >
-                        <option value="pending">Pending</option>
-                        <option value="verified">Verified (Compliant)</option>
-                        <option value="requires_clarification">Requires Clarification</option>
-                        <option value="not_applicable">Not Applicable</option>
-                      </select>
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-slate-800">Document Classification &amp; Extraction Confidence:</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {application.documents.map((d) => (
+                          <div key={d.id} className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                            <div className="flex justify-between items-center">
+                              <span className="font-semibold text-slate-900">{d.name}</span>
+                              <span className="text-purple-700 font-bold font-mono text-[11px]">
+                                {Math.round((d.aiConfidence || 0.9) * 100)}%
+                              </span>
+                            </div>
+                            <p className="text-slate-500 text-[11px]">{d.aiClassification || 'Classified Document'}</p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
+                  </>
+                ) : (
+                  <div className="p-8 text-center text-slate-500">
+                    <p>AI Review has not been executed yet for this dossier.</p>
+                    <Button variant="ai" size="sm" onClick={handleRunAI} className="mt-3">
+                      Run AI Intake Review
+                    </Button>
                   </div>
-                ))}
+                )}
               </CardContent>
             </Card>
           )}
 
-          {/* TAB 6: DEFICIENCIES */}
+          {/* TAB 5: CROSS-DOC MATRIX (NEW SPECIALIZED DESK) */}
+          {activeTab === 'cross_doc' && (
+            <Card>
+              <CardHeader className="pb-3 border-b border-slate-100">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    <Scale className="w-4 h-4 text-blue-600" />
+                    Cross-Document Validation Matrix (Screens A15 &amp; O05)
+                  </CardTitle>
+                  <Badge variant="blue" className="text-[10px]">
+                    Demographic &amp; Credential Cross-Check
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-4 p-0">
+                <div className="divide-y divide-slate-100 text-xs">
+                  {(application.crossDocumentValidations || []).map((cdv) => (
+                    <div key={cdv.id} className="p-4 space-y-2 hover:bg-slate-50 transition-colors">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                        <div className="space-y-0.5">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-slate-900">{cdv.field}</span>
+                            <Badge
+                              variant={
+                                cdv.matchStatus === 'MATCHED' || cdv.matchStatus === 'RESOLVED'
+                                  ? 'green'
+                                  : 'red'
+                              }
+                              className="text-[10px]"
+                            >
+                              {cdv.matchStatus}
+                            </Badge>
+                            <span className="text-purple-700 font-mono text-[10px]">
+                              OCR Conf: {Math.round(cdv.ocrConfidence * 100)}%
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-400 font-mono">{cdv.ruleRef}</p>
+                        </div>
+
+                        {cdv.matchStatus === 'MISMATCH' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => resolveCrossDocValidation(application.id, cdv.id)}
+                            className="text-xs text-emerald-700 border-emerald-300 hover:bg-emerald-50 shrink-0"
+                          >
+                            <Check className="w-3.5 h-3.5 mr-1" />
+                            Resolve Discrepancy (Affidavit)
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-slate-50 border border-slate-200 rounded-lg text-[11px]">
+                        <div>
+                          <span className="text-slate-400 font-medium">Application Form Value:</span>
+                          <p className="font-semibold text-slate-800">{cdv.appValue}</p>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 font-medium">Document Source Value ({cdv.docName}):</span>
+                          <p className="font-semibold text-slate-800">{cdv.documentValue}</p>
+                        </div>
+                      </div>
+
+                      <p className="text-[11px] text-slate-600 leading-relaxed">{cdv.explanation}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* TAB 6: LAW COLLEGE & UNIVERSITY RECOGNITION (O11) */}
+          {activeTab === 'academic_desk' && (
+            <Card>
+              <CardHeader className="pb-3 border-b border-slate-100">
+                <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                  <GraduationCap className="w-4 h-4 text-blue-600" />
+                  Law College &amp; University Recognition Desk (Screen O11)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4 space-y-4 text-xs">
+                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-emerald-900 flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      Statutory University Recognition Confirmed
+                    </span>
+                    <Badge variant="green" className="text-[10px]">BCI Approved Centre</Badge>
+                  </div>
+                  <p className="text-emerald-950 text-[11px] leading-relaxed">
+                    The Tamil Nadu Dr. Ambedkar Law University is recognized under Section 24(1)(c)(iii) of the Advocates Act 1961 and affiliated to the Bar Council of India master directory (Ref: BCI-LE-TN-2002).
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                    <span className="font-bold text-slate-800">Mode of Education Verification</span>
+                    <p className="text-slate-600 text-[11px]">
+                      Regular, Full-time Classroom Instruction (Distance/Correspondence degrees strictly prohibited under BCI Rule 5).
+                    </p>
+                    <Badge variant="green" className="text-[10px] mt-1">Regular Compliant</Badge>
+                  </div>
+
+                  <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                    <span className="font-bold text-slate-800">Attendance Standard Verification</span>
+                    <p className="text-slate-600 text-[11px]">
+                      Principal certificate confirms candidate maintained &gt;70% minimum attendance across all 6 semesters.
+                    </p>
+                    <Badge variant="green" className="text-[10px] mt-1">75.4% Verified</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* TAB 7: CRIMINAL ANTECEDENTS (O12 - RESTRICTED) */}
+          {activeTab === 'criminal_desk' && (
+            <Card className="border-rose-200 bg-white shadow-xs">
+              <CardHeader className="pb-3 border-b border-rose-100 bg-rose-50/50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-rose-600" />
+                    <div>
+                      <CardTitle className="text-sm font-bold text-rose-950">
+                        Restricted Criminal Antecedents Scrutiny Desk (Screen O12)
+                      </CardTitle>
+                      <p className="text-[10px] text-rose-700">
+                        CONFIDENTIAL &bull; AUTHORIZED SCRUTINY OFFICER ACCESS ONLY
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCriminalUnlocked(!criminalUnlocked)}
+                    className="text-xs text-rose-700 border-rose-300 hover:bg-rose-100"
+                  >
+                    {criminalUnlocked ? (
+                      <>
+                        <Lock className="w-3.5 h-3.5 mr-1" /> Lock Desk
+                      </>
+                    ) : (
+                      <>
+                        <Unlock className="w-3.5 h-3.5 mr-1" /> Unlock Desk
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-4 space-y-4 text-xs">
+                {!criminalUnlocked ? (
+                  <div className="p-8 text-center text-slate-500 space-y-2">
+                    <Lock className="w-8 h-8 text-rose-400 mx-auto" />
+                    <p className="font-semibold text-slate-800">Restricted Privacy Boundary</p>
+                    <p className="text-[11px] text-slate-500 max-w-md mx-auto">
+                      Criminal background disclosure contains sensitive personal data. Click &quot;Unlock Desk&quot; above to log authorized scrutiny access.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-[11px]">
+                      <strong>Statutory Legal Safeguard:</strong> The presence of a pending police complaint or trial FIR must NEVER trigger automated rejection or presumption of guilt. Scrutiny must examine whether allegations involve moral turpitude under Section 24A.
+                    </div>
+
+                    {application.criminalAntecedents?.hasPendingCases ? (
+                      <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-rose-900">Disclosed Pending Trial Case:</span>
+                          <Badge variant="amber" className="text-[10px]">Non-Moral Turpitude</Badge>
+                        </div>
+                        {application.criminalAntecedents.pendingCases?.map((c, i) => (
+                          <div key={i} className="text-[11px] space-y-1 text-rose-950">
+                            <p><strong>Case Number:</strong> {c.caseNumber} &bull; {c.court}</p>
+                            <p><strong>FIR:</strong> {c.firNumber} ({c.policeStation})</p>
+                            <p><strong>Sections:</strong> {c.sections}</p>
+                            <p><strong>Status:</strong> {c.status}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span>Candidate self-declaration: No criminal cases, arrests, or convictions on record. CCTNS Police Advisory clean.</span>
+                      </div>
+                    )}
+
+                    <div className="space-y-2 pt-2 border-t border-slate-100">
+                      <label className="block font-bold text-slate-800">
+                        Official Scrutiny Officer Observation (Section 24A Advocates Act 1961):
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={officerCriminalRemarks}
+                        onChange={(e) => setOfficerCriminalRemarks(e.target.value)}
+                        className="w-full text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 bg-white"
+                        placeholder="Record factual observation regarding moral turpitude or absence thereof for the Enrolment Committee..."
+                      />
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] text-slate-400">
+                          Recorded by: {currentUser.name} ({currentUser.designation})
+                        </span>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={handleSaveCriminalRemarks}
+                          className="bg-rose-700 hover:bg-rose-800"
+                        >
+                          Save Official Antecedents Review
+                        </Button>
+                      </div>
+                      {criminalSavedMsg && (
+                        <p className="text-[11px] text-emerald-700 font-medium">
+                          Antecedents review updated and logged to audit trail.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* TAB 8: PHYSICAL ROBING & VERIFICATION DESK (O14) */}
+          {activeTab === 'physical_desk' && (
+            <Card>
+              <CardHeader className="pb-3 border-b border-slate-100">
+                <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-blue-600" />
+                  Physical Verification &amp; Robing Desk (Screen O14)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4 space-y-4 text-xs">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <span className="font-bold text-slate-900 block">Candidate Desk Check-in:</span>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={application.physicalVerification?.attended || false}
+                        onChange={(e) =>
+                          updatePhysicalVerification(application.id, { attended: e.target.checked })
+                        }
+                        className="text-blue-600 rounded"
+                      />
+                      <span className="text-slate-800">Candidate physically present at Desk 3</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={application.physicalVerification?.physicalIdentityVerified || false}
+                        onChange={(e) =>
+                          updatePhysicalVerification(application.id, {
+                            physicalIdentityVerified: e.target.checked,
+                          })
+                        }
+                        className="text-blue-600 rounded"
+                      />
+                      <span className="text-slate-800">Facial &amp; Aadhaar biometric identity confirmed</span>
+                    </label>
+                  </div>
+
+                  <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <span className="font-bold text-slate-900 block">Original Certificates &amp; Attire:</span>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={application.physicalVerification?.originalDegreesChecked || false}
+                        onChange={(e) =>
+                          updatePhysicalVerification(application.id, {
+                            originalDegreesChecked: e.target.checked,
+                          })
+                        }
+                        className="text-blue-600 rounded"
+                      />
+                      <span className="text-slate-800">Original 10th, 12th, B.Com &amp; LL.B inspected</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={application.physicalVerification?.advocateRobingCompliant || false}
+                        onChange={(e) =>
+                          updatePhysicalVerification(application.id, {
+                            advocateRobingCompliant: e.target.checked,
+                          })
+                        }
+                        className="text-blue-600 rounded"
+                      />
+                      <span className="text-slate-800">Robing dress code compliant (Gown, Bands, Black Coat)</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                  <div>
+                    <span className="font-bold text-slate-900">Desk Outcome:</span>
+                    <p className="text-[11px] text-slate-500">
+                      Current: {application.physicalVerification?.outcome || 'Pending'}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        updatePhysicalVerification(application.id, {
+                          outcome: 'Deficient',
+                          remarks: 'Certificate defect noticed during physical inspection.',
+                        })
+                      }
+                      className="text-amber-700 border-amber-300"
+                    >
+                      Record Physical Defect
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() =>
+                        updatePhysicalVerification(application.id, {
+                          attended: true,
+                          originalDegreesChecked: true,
+                          physicalIdentityVerified: true,
+                          advocateRobingCompliant: true,
+                          outcome: 'Cleared',
+                          verifiedOfficerName: currentUser.name,
+                          remarks: 'All original certificates verified in person. Candidate robed properly.',
+                        })
+                      }
+                      className="bg-emerald-700 hover:bg-emerald-800"
+                    >
+                      Pass Physical Verification
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* TAB 9: PAYMENT & TREASURY RECONCILIATION (O15) */}
+          {activeTab === 'payment_desk' && (
+            <Card>
+              <CardHeader className="pb-3 border-b border-slate-100">
+                <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-blue-600" />
+                  Payment &amp; Treasury Reconciliation Desk (Screen O15)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4 space-y-4 text-xs">
+                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-emerald-950">SBI Treasury Reconciliation: COMPLETE</span>
+                      <Badge variant="green" className="text-[10px]">Reconciled</Badge>
+                    </div>
+                    <p className="text-emerald-800 text-[11px] mt-0.5">
+                      Challan #SBI-CHL-2026-99412 &bull; Amount: ₹18,500 &bull; Transacted: 01 Nov 2026 09:45 AM
+                    </p>
+                  </div>
+                  <span className="text-sm font-bold text-emerald-800 font-mono">₹18,500.00</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                    <span className="text-slate-400 font-medium">BCTNP Enrolment Fee</span>
+                    <p className="font-bold text-slate-900 mt-0.5">₹10,500</p>
+                  </div>
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                    <span className="text-slate-400 font-medium">Advocate Welfare Fund</span>
+                    <p className="font-bold text-slate-900 mt-0.5">₹5,000</p>
+                  </div>
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                    <span className="text-slate-400 font-medium">Library &amp; Identity Card</span>
+                    <p className="font-bold text-slate-900 mt-0.5">₹3,000</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* TAB 10: DEFICIENCIES */}
           {activeTab === 'deficiencies' && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
@@ -584,10 +991,10 @@ export const DigitalCaseFile: React.FC = () => {
                         <Badge
                           variant={
                             def.status === 'resolved'
-                              ? 'success'
+                              ? 'green'
                               : def.status === 'correction_submitted'
-                              ? 'primary'
-                              : 'warning'
+                              ? 'blue'
+                              : 'amber'
                           }
                         >
                           {def.status.replace('_', ' ').toUpperCase()}
@@ -595,19 +1002,23 @@ export const DigitalCaseFile: React.FC = () => {
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                      <p><strong>Observation:</strong> {def.officialObservation}</p>
-                      <p><strong>Correction:</strong> {def.requiredCorrection}</p>
+                      <p>
+                        <strong>Observation:</strong> {def.officialObservation}
+                      </p>
+                      <p>
+                        <strong>Correction:</strong> {def.requiredCorrection}
+                      </p>
                     </CardContent>
-                    <CardFooter>
-                      <span className="text-[11px] text-slate-400 font-mono">Issued: {def.createdAt}</span>
+                    <CardFooter className="pt-2 pb-3 px-6 border-t border-slate-100 flex justify-between items-center">
+                      <span className="text-[10px] text-slate-400 font-mono">Issued on {def.createdAt}</span>
                       {def.status !== 'resolved' && (
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => resolveDeficiency(application.id, def.id)}
-                          icon={<CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
+                          className="text-xs text-emerald-700 border-emerald-300"
                         >
-                          Mark Deficiency Resolved
+                          Mark Resolved
                         </Button>
                       )}
                     </CardFooter>
@@ -617,68 +1028,70 @@ export const DigitalCaseFile: React.FC = () => {
             </div>
           )}
 
-          {/* TAB 7: HISTORY */}
+          {/* TAB 11: HISTORY */}
           {activeTab === 'history' && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">Chronological Audit Log</CardTitle>
+                <CardTitle className="text-sm">Append-Only Audit Trail</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="relative border-l-2 border-slate-200 ml-3 space-y-6 py-2">
-                  {application.timeline.map((event) => (
-                    <div key={event.id} className="relative pl-6">
-                      <div
-                        className={`absolute -left-2 top-0.5 w-4 h-4 rounded-full border-2 border-white ${
-                          event.badgeColor === 'green'
-                            ? 'bg-emerald-600'
-                            : event.badgeColor === 'amber'
-                            ? 'bg-amber-500'
-                            : event.badgeColor === 'violet'
-                            ? 'bg-purple-600'
-                            : 'bg-blue-600'
-                        }`}
-                      />
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-slate-900">{event.title}</span>
-                        <span className="text-[10px] text-slate-400 font-mono">{event.timestamp}</span>
+              <CardContent className="space-y-4 text-xs">
+                {application.timeline.map((evt) => (
+                  <div key={evt.id} className="flex items-start gap-3 pb-3 border-b border-slate-100 last:border-0">
+                    <div className="w-2 h-2 rounded-full bg-blue-600 mt-1.5 shrink-0" />
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-slate-900">{evt.title}</span>
+                        <span className="text-slate-400 font-mono text-[10px]">{evt.timestamp}</span>
                       </div>
-                      <p className="text-xs text-slate-600 mt-0.5">{event.description}</p>
-                      <p className="text-[10px] text-slate-400 mt-1">
-                        Actor: {event.actor} ({event.role})
+                      <p className="text-slate-600 text-[11px]">{evt.description}</p>
+                      <p className="text-slate-400 text-[10px]">
+                        Actor: {evt.actor} ({evt.role})
                       </p>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           )}
 
-          {/* TAB 8: DECISION RECORD */}
+          {/* TAB 12: DECISION */}
           {activeTab === 'decision' && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">Enrolment Committee Statutory Decision</CardTitle>
+                <CardTitle className="text-sm">Enrolment Committee Decision Record</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 text-xs">
+              <CardContent className="space-y-3 text-xs">
                 {application.committeeDecision ? (
-                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2 text-emerald-950">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold uppercase tracking-wider text-xs">
-                        Decision: {application.committeeDecision.decision.toUpperCase()}
+                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-emerald-950 uppercase">
+                        Outcome: {application.committeeDecision.decision}
                       </span>
-                      <span className="font-mono text-xs">{application.committeeDecision.meetingRef}</span>
+                      <span className="font-mono text-emerald-700 text-[11px]">
+                        {application.committeeDecision.meetingRef}
+                      </span>
                     </div>
-                    <p className="leading-relaxed">{application.committeeDecision.observation}</p>
-                    <div className="pt-2 border-t border-emerald-200 flex justify-between text-[11px] text-emerald-800">
-                      <span>Recorded by: {application.committeeDecision.memberName}</span>
-                      <span>Date: {application.committeeDecision.date}</span>
-                    </div>
+                    <p className="text-emerald-900">{application.committeeDecision.observation}</p>
+                    {application.committeeDecision.legalBasis && (
+                      <p className="text-[11px] text-emerald-800 font-mono">
+                        Statutory Basis: {application.committeeDecision.legalBasis}
+                      </p>
+                    )}
+                    <p className="text-[10px] text-emerald-700">
+                      Signed: {application.committeeDecision.memberName} on {application.committeeDecision.date}
+                    </p>
                   </div>
                 ) : (
-                  <div className="p-8 text-center text-slate-500 space-y-2">
-                    <Gavel className="w-8 h-8 text-slate-400 mx-auto" />
-                    <p className="font-semibold text-slate-800">No Committee Decision Recorded Yet</p>
-                    <p>Case is progressing through scrutiny and verification before committee submission.</p>
+                  <div className="p-8 text-center text-slate-500">
+                    <p>No formal committee decision has been recorded yet.</p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/committee/review/${application.id}`)}
+                      className="mt-3"
+                    >
+                      Open in Committee Chamber
+                    </Button>
                   </div>
                 )}
               </CardContent>
@@ -686,107 +1099,43 @@ export const DigitalCaseFile: React.FC = () => {
           )}
         </div>
 
-        {/* Right Column (1 col): Action Panel */}
+        {/* Right Column: Workflow Action Panel */}
         <div className="space-y-4">
-          <Card className="border-blue-200 bg-blue-50/20">
-            <CardHeader className="border-blue-100">
-              <CardTitle className="text-xs font-bold uppercase tracking-wider text-blue-900">
-                Official Action Panel
+          <Card className="border-blue-200 bg-blue-50/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                Workflow Actions
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2.5 text-xs">
-              <div>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => forwardStage(application.id, 'verification', 'Verification in Progress')}
-                  className="w-full justify-start gap-2"
-                  icon={<ShieldCheck className="w-4 h-4" />}
-                >
-                  Forward to Verification
-                </Button>
-                <span className="text-[10px] text-slate-500 block px-1 mt-0.5">
-                  Consequence: Moves file to Education/Identity queue.
-                </span>
-              </div>
+            <CardContent className="space-y-2 text-xs">
+              <Button
+                variant="primary"
+                size="md"
+                onClick={() => forwardStage(application.id, 'committee_review', 'Ready for Committee Review')}
+                className="w-full justify-center bg-blue-600 hover:bg-blue-700"
+              >
+                Forward to Committee Chamber
+                <ArrowRight className="w-4 h-4 ml-1.5" />
+              </Button>
 
-              <div>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => forwardStage(application.id, 'committee_prep', 'Ready for Committee')}
-                  className="w-full justify-start gap-2 text-slate-800"
-                  icon={<Gavel className="w-4 h-4 text-indigo-600" />}
-                >
-                  Forward to Committee Prep
-                </Button>
-                <span className="text-[10px] text-slate-500 block px-1 mt-0.5">
-                  Consequence: Adds case to Committee Sitting Agenda.
-                </span>
-              </div>
+              <Button
+                variant="outline"
+                size="md"
+                onClick={() => setDeficiencyModalOpen(true)}
+                className="w-full justify-center text-amber-700 border-amber-300 hover:bg-amber-50"
+              >
+                <AlertCircle className="w-4 h-4 mr-1.5" />
+                Raise Deficiency Notice
+              </Button>
 
-              <div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setDeficiencyModalOpen(true)}
-                  className="w-full justify-start gap-2 text-amber-800 border-amber-200 hover:bg-amber-50"
-                  icon={<AlertCircle className="w-4 h-4 text-amber-600" />}
-                >
-                  Issue Deficiency Notice
-                </Button>
-                <span className="text-[10px] text-slate-500 block px-1 mt-0.5">
-                  Consequence: Applicant will be notified via SMS/Email.
-                </span>
-              </div>
-
-              <div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate('/officer/time-savings')}
-                  className="w-full justify-start gap-2 text-purple-800 border-purple-200 hover:bg-purple-50"
-                  icon={<Clock className="w-4 h-4 text-purple-600" />}
-                >
-                  View AI Work Reduction
-                </Button>
-              </div>
-
-              {/* Disabled Reject / Withdraw action per BRD Section 16.7 */}
-              <div className="pt-2 border-t border-slate-200">
-                <button
-                  type="button"
-                  disabled
-                  title="Per BRD Section 16.7: Reject / Withdraw paths are unapproved and disabled in prototype"
-                  className="w-full py-2 px-3 rounded-lg border text-xs font-semibold bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed text-center"
-                >
-                  Reject / Withdraw Application
-                  <span className="block text-[9px] text-rose-500 font-bold">
-                    [Disabled: Pending Bar Council Approval]
-                  </span>
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Info Box */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xs font-semibold text-slate-700">Audit Status</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-xs text-slate-600">
-              <div className="flex justify-between">
-                <span>Ref Number:</span>
-                <span className="font-mono font-bold text-slate-800">{application.refNumber}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Assigned Officer:</span>
-                <span className="font-medium text-slate-800">{application.assignedOfficerName}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Last Updated:</span>
-                <span className="font-mono text-slate-500">{application.lastUpdated}</span>
-              </div>
+              <Button
+                variant="outline"
+                size="md"
+                onClick={() => navigate('/officer/work-buckets')}
+                className="w-full justify-center"
+              >
+                Return to Work Buckets
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -796,29 +1145,9 @@ export const DigitalCaseFile: React.FC = () => {
       <Modal
         isOpen={deficiencyModalOpen}
         onClose={() => setDeficiencyModalOpen(false)}
-        title="Raise Scrutiny Deficiency Notice"
-        description="Select a document, observation, and issue statutory notice directly to applicant."
-        maxWidth="lg"
-        footer={
-          <div className="flex items-center justify-between w-full">
-            <span className="text-[11px] text-slate-500">Notice is dispatched instantly to applicant.</span>
-            <div className="flex gap-2">
-              <Button variant="secondary" onClick={() => setDeficiencyModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                variant="danger"
-                onClick={handleSendDeficiency}
-                icon={<Send className="w-3.5 h-3.5" />}
-              >
-                Issue Statutory Notice
-              </Button>
-            </div>
-          </div>
-        }
+        title="Raise Statutory Deficiency Notice"
       >
         <div className="space-y-4 text-xs">
-          {/* Preset Buttons */}
           <div>
             <span className="font-semibold text-slate-700 block mb-1.5">Standard Defect Presets:</span>
             <div className="flex flex-wrap gap-2">
@@ -869,8 +1198,7 @@ export const DigitalCaseFile: React.FC = () => {
               value={defReason}
               onChange={(e) => setDefReason(e.target.value)}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
-            >
-            </input>
+            />
           </div>
 
           <div>
@@ -892,6 +1220,15 @@ export const DigitalCaseFile: React.FC = () => {
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
             />
           </div>
+
+          <div className="pt-3 border-t border-slate-200 flex justify-end gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setDeficiencyModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="danger" size="sm" onClick={handleSendDeficiency}>
+              Issue Statutory Notice
+            </Button>
+          </div>
         </div>
       </Modal>
 
@@ -900,24 +1237,17 @@ export const DigitalCaseFile: React.FC = () => {
         isOpen={!!previewDoc}
         onClose={() => setPreviewDoc(null)}
         title={`Document Inspection: ${previewDoc?.name}`}
-        description={`File: ${previewDoc?.fileName} &bull; v${previewDoc?.version}`}
-        maxWidth="lg"
-        footer={
-          <Button variant="secondary" onClick={() => setPreviewDoc(null)}>
-            Close Inspection
-          </Button>
-        }
       >
         {previewDoc && (
           <div className="space-y-4 text-xs">
-            <div className="p-4 bg-slate-100 rounded-xl border border-slate-200 text-center py-10 space-y-2">
-              <FileText className="w-12 h-12 text-slate-400 mx-auto" />
+            <div className="p-4 bg-slate-100 rounded-xl border border-slate-200 text-center py-8 space-y-2">
+              <FileText className="w-10 h-10 text-slate-400 mx-auto" />
               <p className="font-bold text-slate-800">{previewDoc.name}</p>
               <p className="text-slate-500 text-[11px]">
                 {previewDoc.fileName} &bull; {previewDoc.fileSize}
               </p>
-              <Badge variant={previewDoc.status === 'verified' ? 'success' : 'warning'}>
-                {previewDoc.status.replace('_', ' ')}
+              <Badge variant={previewDoc.status === 'verified' ? 'green' : 'amber'}>
+                {previewDoc.status.replace('_', ' ').toUpperCase()}
               </Badge>
             </div>
 

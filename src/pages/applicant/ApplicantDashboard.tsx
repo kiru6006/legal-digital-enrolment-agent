@@ -57,6 +57,14 @@ export const ApplicantDashboard: React.FC = () => {
           <Button
             variant="outline"
             size="sm"
+            onClick={() => navigate('/applicant/checklist')}
+            className="text-xs"
+          >
+            11-Doc Checklist &amp; Pass
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handleDownloadSummary}
             icon={<Download className="w-4 h-4 text-slate-600" />}
           >
@@ -279,13 +287,19 @@ export const ApplicantDashboard: React.FC = () => {
               </div>
             ))}
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex items-center justify-between">
             <Link
-              to="/applicant/documents"
+              to="/applicant/checklist"
               className="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1"
             >
-              <span>Manage all documents</span>
+              <span>11-Category Checklist</span>
               <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+            <Link
+              to="/applicant/documents"
+              className="text-xs font-medium text-slate-500 hover:text-slate-700"
+            >
+              Correction Desk
             </Link>
           </CardFooter>
         </Card>

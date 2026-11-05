@@ -12,15 +12,21 @@ import {
   Building,
   GraduationCap,
   Sparkles,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Badge } from '../../components/common/Badge';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '../../components/common/Card';
+import { SaveStatus } from '../../components/ux/SaveStatus';
 
 export const ApplicantRegistration: React.FC = () => {
   const navigate = useNavigate();
 
   const [stream, setStream] = useState<'fresh_3yr' | 'fresh_5yr' | 'transfer' | 'resumption'>('fresh_3yr');
+  const [showIdentityWhy, setShowIdentityWhy] = useState(false);
+  const [showRollWhy, setShowRollWhy] = useState(false);
   const [formData, setFormData] = useState({
     fullName: 'Arjun Kumar',
     dob: '1999-08-14',
@@ -138,18 +144,29 @@ export const ApplicantRegistration: React.FC = () => {
 
           {/* Identity & Academic Particulars */}
           <Card>
-            <CardHeader className="pb-3 border-b border-slate-100">
+            <CardHeader className="pb-3 border-b border-slate-100 flex flex-row items-center justify-between">
               <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
                 <UserCheck className="w-4 h-4 text-blue-600" />
                 Candidate Identity &amp; Law Degree Details
               </CardTitle>
+              <SaveStatus status="saved" lastSavedTime="Just now" />
             </CardHeader>
             <CardContent className="pt-4 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Candidate Full Name (Exactly as in Law Degree) *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      Candidate Full Name (as per Law Degree) <span className="text-red-500 font-normal">(required)</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowIdentityWhy(!showIdentityWhy)}
+                      className="text-[10px] text-blue-600 hover:text-blue-800 flex items-center gap-0.5"
+                    >
+                      <HelpCircle className="w-3 h-3" />
+                      <span>Why we ask this</span>
+                    </button>
+                  </div>
                   <input
                     type="text"
                     required
@@ -158,13 +175,18 @@ export const ApplicantRegistration: React.FC = () => {
                     className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500 bg-white"
                   />
                   <p className="text-[10px] text-slate-400 mt-1">
-                    Any spelling or initial mismatch requires a registered identity affidavit.
+                    Example: Arjun Kumar. Reused across your statutory affidavit, Form VI &amp; VII, and gazette notice.
                   </p>
+                  {showIdentityWhy && (
+                    <div className="mt-1.5 p-2 bg-blue-50 border border-blue-200 rounded-lg text-[10px] text-blue-900 leading-relaxed">
+                      <strong>Why we ask this:</strong> Required under Section 24 of the Advocates Act 1961 for biometric de-duplication, state roll indexing, and one-candidate-one-enrolment enforcement across State Bar Councils.
+                    </div>
+                  )}
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Date of Birth (Minimum 21 years required) *
+                    Date of Birth <span className="text-red-500 font-normal">(required, min 21 years)</span>
                   </label>
                   <input
                     type="date"
@@ -174,13 +196,13 @@ export const ApplicantRegistration: React.FC = () => {
                     className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500 bg-white"
                   />
                   <p className="text-[10px] text-slate-400 mt-1">
-                    Verified against Class 10 / SSLC birth register.
+                    Example: 14 Aug 1999 (verified against Class 10 / SSLC birth register).
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Mobile Number (For Two-Factor OTP &amp; SMS Dispatch) *
+                    Mobile Number <span className="text-red-500 font-normal">(required, 10 digits)</span>
                   </label>
                   <div className="flex">
                     <span className="inline-flex items-center px-2.5 rounded-l-lg border border-r-0 border-slate-200 bg-slate-50 text-slate-500 text-xs">
@@ -191,27 +213,35 @@ export const ApplicantRegistration: React.FC = () => {
                       required
                       value={formData.mobile}
                       onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                      placeholder="9840123456"
                       className="w-full text-xs px-3 py-2 border border-slate-200 rounded-r-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500 bg-white"
                     />
                   </div>
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    Example: 9840123456. Used for 2FA OTP security authentication and SMS notice dispatches.
+                  </p>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Email Address (For Statutory Notices &amp; Roll Updates) *
+                    Email Address <span className="text-red-500 font-normal">(required)</span>
                   </label>
                   <input
                     type="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="arjun.kumar.demo@example.com"
                     className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500 bg-white"
                   />
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    Example: arjun.kumar.demo@example.com. Used for statutory notices and digital credentials.
+                  </p>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Law College / University Department *
+                    Law College / University Department <span className="text-red-500 font-normal">(required)</span>
                   </label>
                   <input
                     type="text"
@@ -220,12 +250,25 @@ export const ApplicantRegistration: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, lawCollege: e.target.value })}
                     className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500 bg-white"
                   />
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    Example: The Tamil Nadu Dr. Ambedkar Law University, Chennai.
+                  </p>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Law Degree Final Roll Number / Registration No *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      Law Degree Final Roll Number <span className="text-red-500 font-normal">(required)</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowRollWhy(!showRollWhy)}
+                      className="text-[10px] text-blue-600 hover:text-blue-800 flex items-center gap-0.5"
+                    >
+                      <HelpCircle className="w-3 h-3" />
+                      <span>Why we ask this</span>
+                    </button>
+                  </div>
                   <input
                     type="text"
                     required
@@ -233,6 +276,14 @@ export const ApplicantRegistration: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, lawRollNumber: e.target.value })}
                     className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500 bg-white font-mono"
                   />
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    Example: 51904211 (printed on your final convocation degree marksheet).
+                  </p>
+                  {showRollWhy && (
+                    <div className="mt-1.5 p-2 bg-blue-50 border border-blue-200 rounded-lg text-[10px] text-blue-900 leading-relaxed">
+                      <strong>Why we ask this:</strong> Checked against BCI and TNDALU repository to prevent duplicate enrolments and verify academic recognition under Section 24(1)(c).
+                    </div>
+                  )}
                 </div>
               </div>
 

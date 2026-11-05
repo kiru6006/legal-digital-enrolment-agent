@@ -5,10 +5,24 @@ import { Sidebar } from './Sidebar';
 import { Breadcrumbs } from './Breadcrumbs';
 import { NotificationDrawer } from '../demo/NotificationDrawer';
 import { DemoWalkthroughModal } from '../demo/DemoWalkthroughModal';
+import { HelpFooter } from '../ux/HelpFooter';
+import { GlobalSearchModal } from '../ux/GlobalSearchModal';
+import { KeyboardShortcutsModal } from '../ux/KeyboardShortcutsModal';
+import { Language, getStoredLanguage, setStoredLanguage } from '../../services/i18nService';
 
 export const Layout: React.FC = () => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [walkthroughOpen, setWalkthroughOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+
+  // Read initial language state
+  const [currentLang, setCurrentLang] = useState<Language>(getStoredLanguage());
+
+  const handleLanguageChange = (lang: Language) => {
+    setCurrentLang(lang);
+    setStoredLanguage(lang);
+  };
 
   // Read initial collapse state from localStorage
   const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
@@ -43,9 +57,6 @@ export const Layout: React.FC = () => {
     setIsMobileOpen(false);
   };
 
-  // When clicking navbar menu toggle:
-  // on desktop (>= 768px): collapse or expand the sidebar rail
-  // on mobile (< 768px): open/close the mobile slide-in drawer
   const handleNavbarToggle = () => {
     if (typeof window !== 'undefined' && window.innerWidth >= 768) {
       toggleCollapse();
@@ -54,12 +65,25 @@ export const Layout: React.FC = () => {
     }
   };
 
-  // Keyboard shortcut: Cmd+B (macOS) or Ctrl+B (Windows/Linux)
+  // Global Keyboard shortcuts:
+  // Cmd+B / Ctrl+B: toggle sidebar
+  // /: open global search
+  // ?: open keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't intercept when actively typing in an input or textarea
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b') {
         e.preventDefault();
         toggleCollapse();
+      } else if (e.key === '/' && !isInput) {
+        e.preventDefault();
+        setSearchOpen(true);
+      } else if (e.key === '?' && !isInput) {
+        e.preventDefault();
+        setShortcutsOpen(true);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -78,6 +102,10 @@ export const Layout: React.FC = () => {
         onOpenWalkthrough={() => setWalkthroughOpen(true)}
         onToggleSidebar={!isLandingPage ? handleNavbarToggle : undefined}
         isSidebarCollapsed={isCollapsed}
+        currentLang={currentLang}
+        onLanguageChange={handleLanguageChange}
+        onOpenSearch={() => setSearchOpen(true)}
+        onOpenShortcuts={() => setShortcutsOpen(true)}
       />
 
       <div className="flex-1 flex overflow-hidden relative">
@@ -97,10 +125,13 @@ export const Layout: React.FC = () => {
             <Outlet />
           </div>
 
-          {/* Institutional Footer */}
-          <footer className="py-4 px-6 border-t border-slate-200 bg-white text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2 mt-auto">
+          {/* Section 1.1: Persistent Help & Support Footer on Every Page */}
+          <HelpFooter currentLang={currentLang} />
+
+          {/* Institutional Copyright Footer */}
+          <footer className="py-3 px-6 border-t border-slate-200 bg-white text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2 mt-auto">
             <p>
-              <strong>AEMS</strong> | Bar Council of Tamil Nadu and Puducherry — Statutory Digital Enrolment Office MVP.
+              <strong>AEMS</strong> | Bar Council of Tamil Nadu and Puducherry — Statutory Digital Enrolment Office.
             </p>
             <p className="text-[11px] text-slate-400">
               Interactive demonstration with simulated AI scrutiny &amp; mock state.
@@ -118,6 +149,19 @@ export const Layout: React.FC = () => {
         isOpen={walkthroughOpen}
         onClose={() => setWalkthroughOpen(false)}
       />
+
+      {/* Global Dossier Search Modal (Section 5) */}
+      <GlobalSearchModal
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
+
+      {/* Keyboard Shortcuts Cheat Sheet (Section 5) */}
+      <KeyboardShortcutsModal
+        isOpen={shortcutsOpen}
+        onClose={() => setShortcutsOpen(false)}
+      />
     </div>
   );
 };
+

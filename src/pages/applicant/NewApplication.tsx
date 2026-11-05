@@ -13,12 +13,18 @@ import {
   Save,
   AlertCircle,
   FileCheck,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
+  ShieldAlert,
 } from 'lucide-react';
 import { useAEMS } from '../../store/applicationStore';
 import { ApplicationRecord } from '../../types/application';
 import { Button } from '../../components/common/Button';
 import { Badge } from '../../components/common/Badge';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '../../components/common/Card';
+import { SaveStatus } from '../../components/ux/SaveStatus';
+import { PrefillChip } from '../../components/ux/PrefillChip';
 
 export const NewApplication: React.FC = () => {
   const { addApplication } = useAEMS();
@@ -27,17 +33,21 @@ export const NewApplication: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
+  const [showAadhaarWhy, setShowAadhaarWhy] = useState(false);
+  const [showRule49Why, setShowRule49Why] = useState(false);
+  const [showCriminalWhy, setShowCriminalWhy] = useState(false);
+  const [criminalAffirmed, setCriminalAffirmed] = useState(true);
 
   // Form State
   const [formData, setFormData] = useState({
     // Step 1: Personal
-    fullName: '',
+    fullName: 'Arjun Kumar',
     gender: 'Male',
     dob: '1999-05-15',
-    email: '',
-    phone: '',
+    email: 'arjun.kumar.demo@example.com',
+    phone: '+91 98401 23456',
     aadhaarMasked: 'XXXX-XXXX-4589',
-    fatherName: '',
+    fatherName: 'R. Krishnan',
 
     // Step 2: Education
     qualifyingDegree: 'Bachelor of Arts (B.A. English)',
@@ -231,7 +241,8 @@ export const NewApplication: React.FC = () => {
             Official statutory enrolment application under Section 24 of the Advocates Act, 1961.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <SaveStatus status="saved" lastSavedTime="Just now" />
           <Button
             variant="outline"
             size="sm"
@@ -308,76 +319,127 @@ export const NewApplication: React.FC = () => {
         <CardContent className="space-y-4">
           {/* STEP 1: Personal Info */}
           {currentStep === 1 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Full Name (as per Law Degree) *
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. K. Vignesh"
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-2 p-2.5 bg-blue-50/60 border border-blue-200 rounded-xl">
+                <span className="text-[11px] font-bold text-blue-900">Pre-filled from Intake:</span>
+                <PrefillChip
+                  label="Candidate Name"
                   value={formData.fullName}
-                  onChange={(e) => handleInputChange('fullName', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                  origin="Registration Verification"
+                  onUpdate={(val) => handleInputChange('fullName', val)}
                 />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Father / Guardian's Full Name *
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. R. Krishnan"
-                  value={formData.fatherName}
-                  onChange={(e) => handleInputChange('fatherName', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Gender *</label>
-                <select
-                  value={formData.gender}
-                  onChange={(e) => handleInputChange('gender', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
-                >
-                  <option>Male</option>
-                  <option>Female</option>
-                  <option>Third Gender</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Date of Birth *</label>
-                <input
-                  type="date"
+                <PrefillChip
+                  label="Date of Birth"
                   value={formData.dob}
-                  onChange={(e) => handleInputChange('dob', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                  origin="SSLC / Class 10 Record"
+                  onUpdate={(val) => handleInputChange('dob', val)}
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Email Address *</label>
-                <input
-                  type="email"
-                  placeholder="vignesh.k@example.com"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
-                />
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Full Name (as per Law Degree) <span className="text-red-500 font-normal">(required)</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. K. Vignesh"
+                    value={formData.fullName}
+                    onChange={(e) => handleInputChange('fullName', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: Arjun Kumar</p>
+                </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Mobile Number *</label>
-                <input
-                  type="tel"
-                  placeholder="+91 98401 23456"
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
-                />
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Father / Guardian's Full Name <span className="text-red-500 font-normal">(required)</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. R. Krishnan"
+                    value={formData.fatherName}
+                    onChange={(e) => handleInputChange('fatherName', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: R. Krishnan</p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Gender *</label>
+                  <select
+                    value={formData.gender}
+                    onChange={(e) => handleInputChange('gender', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                  >
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Third Gender</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Date of Birth <span className="text-red-500 font-normal">(required, min 21 yrs)</span></label>
+                  <input
+                    type="date"
+                    value={formData.dob}
+                    onChange={(e) => handleInputChange('dob', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: 15/05/1999</p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Email Address <span className="text-red-500 font-normal">(required)</span></label>
+                  <input
+                    type="email"
+                    placeholder="vignesh.k@example.com"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: vignesh.k@example.com</p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Mobile Number <span className="text-red-500 font-normal">(required)</span></label>
+                  <input
+                    type="tel"
+                    placeholder="+91 98401 23456"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: 9840123456 (10 digits starting with 6-9)</p>
+                </div>
+
+                <div className="md:col-span-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      Masked Aadhaar Number (UIDAI) <span className="text-red-500 font-normal">(required)</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowAadhaarWhy(!showAadhaarWhy)}
+                      className="text-[10px] text-blue-600 hover:text-blue-800 flex items-center gap-0.5 cursor-pointer"
+                    >
+                      <HelpCircle className="w-3 h-3" />
+                      <span>Why we ask this</span>
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    disabled
+                    value={formData.aadhaarMasked}
+                    className="w-full px-3 py-2 border border-slate-200 bg-slate-50 text-slate-600 rounded-lg text-xs font-mono"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Masked UIDAI reference verified via OTP. Never stored in plain text.</p>
+                  {showAadhaarWhy && (
+                    <div className="mt-1.5 p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-[10px] text-blue-900 leading-relaxed">
+                      <strong>Why we ask this:</strong> Required under Section 24 of the Advocates Act 1961 for biometric de-duplication, state roll indexing, and one-candidate-one-enrolment enforcement across State Bar Councils.
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -395,6 +457,7 @@ export const NewApplication: React.FC = () => {
                   onChange={(e) => handleInputChange('qualifyingDegree', e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
                 />
+                <p className="text-[10px] text-slate-400 mt-1">Example: Bachelor of Arts (B.A. English)</p>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -406,6 +469,7 @@ export const NewApplication: React.FC = () => {
                   onChange={(e) => handleInputChange('qualifyingUniversity', e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
                 />
+                <p className="text-[10px] text-slate-400 mt-1">Example: University of Madras</p>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -417,6 +481,7 @@ export const NewApplication: React.FC = () => {
                   onChange={(e) => handleInputChange('qualifyingPassingYear', e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
                 />
+                <p className="text-[10px] text-slate-400 mt-1">Example: 2021 (4 digits)</p>
               </div>
             </div>
           )}
@@ -424,8 +489,27 @@ export const NewApplication: React.FC = () => {
           {/* STEP 3: Employment Details (Bar Rule 49) */}
           {currentStep === 3 && (
             <div className="space-y-4">
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900">
-                <strong>Statutory Declaration (Bar Council of India Rule 49):</strong> An advocate shall not be a full-time salaried employee of any person, government, or corporation so long as he/she continues to practice.
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 space-y-1">
+                <div className="flex items-center justify-between">
+                  <strong className="flex items-center gap-1.5">
+                    <Briefcase className="w-4 h-4 text-amber-700" />
+                    Statutory Declaration (Bar Council of India Rule 49)
+                  </strong>
+                  <button
+                    type="button"
+                    onClick={() => setShowRule49Why(!showRule49Why)}
+                    className="text-[10px] text-amber-800 hover:underline flex items-center gap-0.5 cursor-pointer"
+                  >
+                    <HelpCircle className="w-3 h-3" />
+                    <span>Why we ask this</span>
+                  </button>
+                </div>
+                <p>An advocate shall not be a full-time salaried employee of any person, government, or corporation so long as he/she continues to practice.</p>
+                {showRule49Why && (
+                  <div className="mt-2 p-2 bg-white/80 rounded border border-amber-300 text-[10px] text-amber-950">
+                    <strong>Rule Background:</strong> Legal practice is an independent and exclusive profession. Candidates holding salaried employment must surrender employment or produce formal relieving orders prior to statutory robing.
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
@@ -453,134 +537,205 @@ export const NewApplication: React.FC = () => {
                   I have resigned from any prior employment and possess an official Relieving / Resignation acceptance letter.
                 </label>
               </div>
+
+              {/* Section 24A Criminal Antecedents Declaration */}
+              <div className="pt-3 border-t border-slate-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                    <ShieldAlert className="w-4 h-4 text-rose-600" />
+                    Disqualification Scrutiny (Section 24A Advocates Act 1961)
+                  </h4>
+                  <button
+                    type="button"
+                    onClick={() => setShowCriminalWhy(!showCriminalWhy)}
+                    className="text-[10px] text-blue-600 hover:text-blue-800 flex items-center gap-0.5 cursor-pointer"
+                  >
+                    <HelpCircle className="w-3 h-3" />
+                    <span>Why we ask this</span>
+                  </button>
+                </div>
+                {showCriminalWhy && (
+                  <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-lg text-[10px] text-rose-900 leading-relaxed">
+                    <strong>Statutory Requirement under Section 24A:</strong> No person shall be admitted as an advocate on a State roll if convicted of an offence involving moral turpitude, or convicted under the Untouchability (Offences) Act. Any disclosure triggers confidential scrutiny by the Enrolment Committee.
+                  </div>
+                )}
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-2.5">
+                  <input
+                    type="checkbox"
+                    id="criminalAffirm"
+                    checked={criminalAffirmed}
+                    onChange={(e) => setCriminalAffirmed(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 rounded mt-0.5"
+                  />
+                  <label htmlFor="criminalAffirm" className="text-xs text-slate-700 leading-relaxed">
+                    <strong>Statutory Affirmation:</strong> I have never been convicted by any Court of Law of any offence involving moral turpitude, nor are any criminal proceedings or charges framed against me in any jurisdiction.
+                  </label>
+                </div>
+              </div>
             </div>
           )}
 
           {/* STEP 4: Communication Address */}
           {currentStep === 4 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Door / Flat No *</label>
-                <input
-                  type="text"
-                  value={formData.doorNo}
-                  onChange={(e) => handleInputChange('doorNo', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+                <span className="text-[11px] font-bold text-slate-700">Pre-filled Address:</span>
+                <PrefillChip
+                  label="Verified Address"
+                  value={`${formData.doorNo}, ${formData.city} - ${formData.pincode}`}
+                  origin="Aadhaar / Utility Proof"
+                  affectedFields={['Gazette Notice', 'Official Correspondence']}
                 />
               </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Street Address *</label>
-                <input
-                  type="text"
-                  value={formData.street}
-                  onChange={(e) => handleInputChange('street', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">City *</label>
-                <input
-                  type="text"
-                  value={formData.city}
-                  onChange={(e) => handleInputChange('city', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">District *</label>
-                <input
-                  type="text"
-                  value={formData.district}
-                  onChange={(e) => handleInputChange('district', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">State *</label>
-                <input
-                  type="text"
-                  value={formData.state}
-                  onChange={(e) => handleInputChange('state', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Postal Pincode *</label>
-                <input
-                  type="text"
-                  value={formData.pincode}
-                  onChange={(e) => handleInputChange('pincode', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
-                />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Door / Flat No <span className="text-red-500 font-normal">(required)</span></label>
+                  <input
+                    type="text"
+                    value={formData.doorNo}
+                    onChange={(e) => handleInputChange('doorNo', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: Flat 4A, Green Garden</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Street Address <span className="text-red-500 font-normal">(required)</span></label>
+                  <input
+                    type="text"
+                    value={formData.street}
+                    onChange={(e) => handleInputChange('street', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: Kamarajar Salai, Mylapore</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">City <span className="text-red-500 font-normal">(required)</span></label>
+                  <input
+                    type="text"
+                    value={formData.city}
+                    onChange={(e) => handleInputChange('city', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: Chennai</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">District <span className="text-red-500 font-normal">(required)</span></label>
+                  <input
+                    type="text"
+                    value={formData.district}
+                    onChange={(e) => handleInputChange('district', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: Chennai</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">State <span className="text-red-500 font-normal">(required)</span></label>
+                  <input
+                    type="text"
+                    value={formData.state}
+                    onChange={(e) => handleInputChange('state', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: Tamil Nadu</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Postal Pincode <span className="text-red-500 font-normal">(required, 6 digits)</span></label>
+                  <input
+                    type="text"
+                    value={formData.pincode}
+                    onChange={(e) => handleInputChange('pincode', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">PIN code: 6 digits, example: 600004</p>
+                </div>
               </div>
             </div>
           )}
 
           {/* STEP 5: Law Degree Details */}
           {currentStep === 5 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Law Degree Stream *</label>
-                <select
-                  value={formData.lawDegree}
-                  onChange={(e) => handleInputChange('lawDegree', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
-                >
-                  <option>3-Year LL.B</option>
-                  <option>5-Year B.A. LL.B (Hons)</option>
-                  <option>5-Year B.B.A. LL.B (Hons)</option>
-                  <option>5-Year B.Com LL.B (Hons)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Law College Attended *</label>
-                <input
-                  type="text"
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-2 p-2.5 bg-blue-50/60 border border-blue-200 rounded-xl">
+                <span className="text-[11px] font-bold text-blue-900">Pre-filled Law Degree:</span>
+                <PrefillChip
+                  label="Law Faculty"
                   value={formData.lawCollege}
-                  onChange={(e) => handleInputChange('lawCollege', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+                  origin="Registration Intake"
+                  affectedFields={['Enrolment Docket', 'Alumni Register']}
+                  onUpdate={(val) => handleInputChange('lawCollege', val)}
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">University *</label>
-                <input
-                  type="text"
-                  value={formData.lawUniversity}
-                  onChange={(e) => handleInputChange('lawUniversity', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
-                />
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Law Degree Stream *</label>
+                  <select
+                    value={formData.lawDegree}
+                    onChange={(e) => handleInputChange('lawDegree', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+                  >
+                    <option>3-Year LL.B</option>
+                    <option>5-Year B.A. LL.B (Hons)</option>
+                    <option>5-Year B.B.A. LL.B (Hons)</option>
+                    <option>5-Year B.Com LL.B (Hons)</option>
+                  </select>
+                </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">University Roll / Register No *</label>
-                <input
-                  type="text"
-                  value={formData.lawRollNumber}
-                  onChange={(e) => handleInputChange('lawRollNumber', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
-                />
-              </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Law College Attended *</label>
+                  <input
+                    type="text"
+                    value={formData.lawCollege}
+                    onChange={(e) => handleInputChange('lawCollege', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: Dr. Ambedkar Government Law College, Chennai</p>
+                </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Year of Passing *</label>
-                <input
-                  type="text"
-                  value={formData.lawPassingYear}
-                  onChange={(e) => handleInputChange('lawPassingYear', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
-                />
-              </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">University *</label>
+                  <input
+                    type="text"
+                    value={formData.lawUniversity}
+                    onChange={(e) => handleInputChange('lawUniversity', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: The Tamil Nadu Dr. Ambedkar Law University</p>
+                </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Percentage / CGPA *</label>
-                <input
-                  type="text"
-                  value={formData.percentageOrCgpa}
-                  onChange={(e) => handleInputChange('percentageOrCgpa', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
-                />
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">University Roll / Register No *</label>
+                  <input
+                    type="text"
+                    value={formData.lawRollNumber}
+                    onChange={(e) => handleInputChange('lawRollNumber', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: 52009841</p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Year of Passing *</label>
+                  <input
+                    type="text"
+                    value={formData.lawPassingYear}
+                    onChange={(e) => handleInputChange('lawPassingYear', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: 2024 (4 digits)</p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Percentage / CGPA *</label>
+                  <input
+                    type="text"
+                    value={formData.percentageOrCgpa}
+                    onChange={(e) => handleInputChange('percentageOrCgpa', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">Example: 67.50% or 7.80 CGPA</p>
+                </div>
               </div>
             </div>
           )}

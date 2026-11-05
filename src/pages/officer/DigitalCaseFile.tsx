@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   FileText,
@@ -27,6 +27,7 @@ import {
   ExternalLink,
   Lock,
   Unlock,
+  Keyboard,
 } from 'lucide-react';
 import { useAEMS } from '../../store/applicationStore';
 import { PRIMARY_DEMO_APP_ID } from '../../data/mockApplications';
@@ -37,6 +38,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '../../comp
 import { Modal } from '../../components/common/Modal';
 import { exportApplicationsToCSV } from '../../utils/exportCsv';
 import { aiDemoService } from '../../services/aiDemoService';
+import { HandoverBanner } from '../../components/ux/HandoverBanner';
 
 export const DigitalCaseFile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -154,14 +156,79 @@ export const DigitalCaseFile: React.FC = () => {
     setTimeout(() => setCriminalSavedMsg(false), 3000);
   };
 
+  const [shortcutFeedback, setShortcutFeedback] = useState<string | null>(null);
+
+  // Keyboard-first review shortcuts (Section 5: V, D, N, J, K)
+  useEffect(() => {
+    const handleOfficerKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+
+      if (e.key === 'v' || e.key === 'V') {
+        e.preventDefault();
+        const unverifiedDoc = application.documents.find((d) => d.status !== 'verified');
+        if (unverifiedDoc) {
+          updateVerificationItem(
+            application.id,
+            unverifiedDoc.id,
+            'verified',
+            'Quick-verified via officer keyboard shortcut [V]'
+          );
+          setShortcutFeedback(`Verified "${unverifiedDoc.name}" [V]`);
+          setTimeout(() => setShortcutFeedback(null), 2500);
+        } else {
+          setShortcutFeedback('All documents already verified!');
+          setTimeout(() => setShortcutFeedback(null), 2000);
+        }
+      } else if (e.key === 'd' || e.key === 'D') {
+        e.preventDefault();
+        setDeficiencyModalOpen(true);
+        setShortcutFeedback('Opened Raise Deficiency Modal [D]');
+        setTimeout(() => setShortcutFeedback(null), 2000);
+      } else if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault();
+        setActiveTab('decision');
+        setShortcutFeedback('Switched to Reviewer Notes & Decision [N]');
+        setTimeout(() => setShortcutFeedback(null), 2000);
+      }
+    };
+
+    window.addEventListener('keydown', handleOfficerKey);
+    return () => window.removeEventListener('keydown', handleOfficerKey);
+  }, [application, updateVerificationItem]);
+
   const openDeficiencies = application.deficiencies.filter((d) => d.status === 'open');
   const verifiedDocsCount = application.documents.filter((d) => d.status === 'verified').length;
 
   return (
     <div className="p-4 sm:p-5 max-w-7xl mx-auto space-y-4">
+      {/* Officer Shortcut Toast */}
+      {shortcutFeedback && (
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-lg border border-slate-700 text-xs font-semibold flex items-center gap-2 animate-bounce">
+          <Keyboard className="w-4 h-4 text-blue-400" />
+          <span>{shortcutFeedback}</span>
+        </div>
+      )}
+
+      {/* Handover & Resumption Context Banner */}
+      <HandoverBanner
+        previousOfficer="R. Lakshmi (Senior Scrutiny Officer)"
+        handoverNote="Initial demographic and law degree verification cleared. Awaiting sworn notary affidavit for B.Com name initial variation. Do not re-verify TNDALU law degree authenticity."
+        newDocsCount={application.documents.filter(d => d.status === 'verified').length}
+        newCorrectionsCount={application.deficiencies.filter(d => d.status === 'correction_submitted').length || 1}
+        lastVisitDate="Yesterday, 04:15 PM"
+      />
+
       {/* Top Banner */}
       <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-        <div className="space-y-0.5">
+        <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="blue" className="text-[10px] uppercase tracking-wider">
               Digital Case File • Screen O05
@@ -182,11 +249,34 @@ export const DigitalCaseFile: React.FC = () => {
             <Badge variant={application.priority === 'critical' ? 'red' : 'gray'} size="sm">
               Priority: {application.priority.toUpperCase()}
             </Badge>
+            {/* SLA Timer */}
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold">
+              <Clock className="w-3.5 h-3.5 text-amber-600" />
+              <span>SLA: 3 days, due tomorrow</span>
+            </div>
+            {/* Correction Received Badge */}
+            {(application.stage === 'correction_requested' || application.deficiencies.some(d => d.status === 'correction_submitted')) && (
+              <Badge variant="amber" size="sm" className="font-bold border border-amber-400">
+                Correction received
+              </Badge>
+            )}
+            {/* Restricted Criminal Status */}
+            <Badge
+              variant={application.criminalAntecedents?.hasPreviousConvictions || application.criminalAntecedents?.hasPendingCases ? 'red' : 'green'}
+              size="sm"
+              className="font-medium"
+            >
+              Criminal review: {application.criminalAntecedents?.hasPreviousConvictions || application.criminalAntecedents?.hasPendingCases ? 'Pending Verification' : 'Clean'}
+            </Badge>
+            {/* Payment Status */}
+            <Badge variant="green" size="sm" className="font-medium">
+              Payment: Verified (₹60,000)
+            </Badge>
           </div>
           <h1 className="text-xl font-bold text-slate-900">{application.applicantName}</h1>
           <p className="text-[11px] text-slate-500">
             Assigned Scrutiny Officer: <strong>{application.assignedOfficerName || 'M. Srinivasan'}</strong> &bull; Submitted:{' '}
-            {application.submissionDate} &bull; Stream: 3-Year LL.B (TNDALU)
+            {application.submissionDate} &bull; Stream: 3-Year LL.B (TNDALU) &bull; Keyboard shortcuts active: <kbd className="px-1 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono text-[10px]">V</kbd> Verify &bull; <kbd className="px-1 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono text-[10px]">D</kbd> Deficiency &bull; <kbd className="px-1 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono text-[10px]">N</kbd> Notes
           </p>
         </div>
 
@@ -223,8 +313,8 @@ export const DigitalCaseFile: React.FC = () => {
             {[
               { id: 'overview', label: 'Overview', icon: FileText },
               { id: 'details', label: 'Details', icon: User },
-              { id: 'documents', label: `Docs (${application.documents.length})`, icon: Eye },
-              { id: 'ai_review', label: 'AI Review', icon: Sparkles, badge: 'AI' },
+              { id: 'documents', label: `Verification (${application.documents.length})`, icon: Eye, badge: 'Findings: 2' },
+              { id: 'ai_review', label: 'AI Review', icon: Sparkles, badge: 'Findings: 2' },
               { id: 'cross_doc', label: 'Cross-Doc Matrix', icon: Scale },
               { id: 'academic_desk', label: 'College Check', icon: GraduationCap },
               { id: 'criminal_desk', label: 'Criminal Scrutiny', icon: Shield, badge: 'Restricted' },
@@ -258,7 +348,7 @@ export const DigitalCaseFile: React.FC = () => {
                       className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold ${
                         isActive
                           ? 'bg-blue-800 text-white'
-                          : tab.badge === 'AI'
+                          : tab.badge.includes('Findings') || tab.badge === 'AI'
                           ? 'bg-purple-100 text-purple-700'
                           : tab.badge === 'Restricted'
                           ? 'bg-rose-100 text-rose-700'

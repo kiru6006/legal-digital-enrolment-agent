@@ -13,17 +13,27 @@ import {
   ShieldCheck,
   CheckCircle2,
   Menu,
+  Search,
+  Keyboard,
+  HelpCircle,
 } from 'lucide-react';
 import { useAEMS } from '../../store/applicationStore';
 import { UserRole } from '../../types/user';
 import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
+import { LanguageToggle } from '../ux/LanguageToggle';
+import { SaveStatus } from '../ux/SaveStatus';
+import { Language } from '../../services/i18nService';
 
 interface NavbarProps {
   onOpenNotifications: () => void;
   onOpenWalkthrough: () => void;
   onToggleSidebar?: () => void;
   isSidebarCollapsed?: boolean;
+  currentLang?: Language;
+  onLanguageChange?: (lang: Language) => void;
+  onOpenSearch?: () => void;
+  onOpenShortcuts?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -31,6 +41,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenWalkthrough,
   onToggleSidebar,
   isSidebarCollapsed,
+  currentLang = 'en',
+  onLanguageChange,
+  onOpenSearch,
+  onOpenShortcuts,
 }) => {
   const { currentRole, currentUser, switchRole, notifications, resetDemoScenario } = useAEMS();
   const navigate = useNavigate();
@@ -127,7 +141,47 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Center / Right: Interactive Controls */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Global Search Button */}
+          {onOpenSearch && (
+            <button
+              onClick={onOpenSearch}
+              className="hidden sm:flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-medium cursor-pointer transition-colors"
+              title="Global Dossier Search (Press /)"
+            >
+              <Search className="w-3.5 h-3.5 text-slate-400" />
+              <span className="hidden md:inline">Search Dossiers...</span>
+              <kbd className="text-[10px] bg-white border border-slate-300 px-1.5 py-0.2 rounded font-mono font-bold text-slate-500">
+                /
+              </kbd>
+            </button>
+          )}
+
+          {/* Persistent Save Status Indicator */}
+          <div className="hidden lg:block">
+            <SaveStatus currentLang={currentLang} />
+          </div>
+
+          {/* Bilingual Language Switcher */}
+          {onLanguageChange && (
+            <div className="hidden sm:block">
+              <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
+            </div>
+          )}
+
+          {/* Officer Live Queue Count Badge */}
+          {currentRole === 'officer' && (
+            <div
+              onClick={() => navigate('/officer/work-queue')}
+              className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold cursor-pointer hover:bg-blue-100/70 transition-colors"
+              title="Open My Active Work Queue"
+            >
+              <Briefcase className="w-3.5 h-3.5" />
+              <span>Queue: 20</span>
+              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+            </div>
+          )}
+
           {/* Active Role Selector Dropdown */}
           <div className="relative">
             <button
@@ -216,6 +270,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             )}
           </button>
+
+          {/* Keyboard Shortcuts Button */}
+          {onOpenShortcuts && (
+            <button
+              onClick={onOpenShortcuts}
+              className="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+              title="Keyboard Shortcuts Cheat Sheet (Press ?)"
+              aria-label="Keyboard Shortcuts"
+            >
+              <Keyboard className="w-4 h-4" />
+            </button>
+          )}
 
           {/* Current User Pill */}
           <div className="hidden md:flex items-center gap-2 pl-2 border-l border-[var(--color-border)]">

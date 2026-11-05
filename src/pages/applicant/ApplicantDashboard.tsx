@@ -20,6 +20,8 @@ import { Button } from '../../components/common/Button';
 import { Badge } from '../../components/common/Badge';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '../../components/common/Card';
 import { exportApplicationsToCSV } from '../../utils/exportCsv';
+import { NextActionCard } from '../../components/ux/NextActionCard';
+import { OCRConfirmPanel } from '../../components/ux/OCRConfirmPanel';
 
 export const ApplicantDashboard: React.FC = () => {
   const { primaryApplication, notifications } = useAEMS();
@@ -82,6 +84,12 @@ export const ApplicantDashboard: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      {/* Section 1.1: Always-Visible Next Action Card */}
+      <NextActionCard />
+
+      {/* Section 2.2: OCR to Confirm, Not Retype (Bulk Confirmation & Linking) */}
+      <OCRConfirmPanel />
 
       {/* 5-Stage Statutory Progress Bar (Screen APP-01) */}
       <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">

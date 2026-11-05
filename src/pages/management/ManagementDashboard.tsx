@@ -70,30 +70,31 @@ export const ManagementDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 sm:p-5 max-w-7xl mx-auto space-y-4">
       {/* Executive Header */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-              Executive Command Centre
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+              Executive Command Centre • Screen M01
             </span>
-            <span className="text-xs text-slate-400">Institutional Oversight</span>
+            <span className="text-xs text-slate-400 font-medium">Institutional Oversight</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-xl font-bold text-slate-900">
             Enrolment Directorate: {currentUser.name}
           </h1>
-          <p className="text-xs text-slate-500">
+          <p className="text-[11px] text-slate-500">
             Real-time scrutiny velocity, officer capacity, and statutory compliance metrics.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => exportApplicationsToCSV(applications, 'AEMS_Executive_Enrolment_Summary.csv')}
-            icon={<FileSpreadsheet className="w-4 h-4 text-slate-600" />}
+            icon={<FileSpreadsheet className="w-3.5 h-3.5 text-slate-600" />}
+            className="text-xs"
           >
             Export All Data
           </Button>
@@ -102,7 +103,8 @@ export const ManagementDashboard: React.FC = () => {
             variant="primary"
             size="sm"
             onClick={() => navigate('/management/committee')}
-            icon={<Gavel className="w-4 h-4" />}
+            icon={<Gavel className="w-3.5 h-3.5" />}
+            className="text-xs"
           >
             Committee Prep ({awaitingCommittee})
           </Button>

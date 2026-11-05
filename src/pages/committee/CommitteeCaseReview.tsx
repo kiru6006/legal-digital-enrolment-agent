@@ -98,39 +98,40 @@ export const CommitteeCaseReview: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="p-4 sm:p-5 max-w-6xl mx-auto space-y-4">
       {/* Header */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="space-y-1">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div className="space-y-0.5">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
               Screens C03-C05 • Statutory Committee Chamber
             </span>
-            <span className="text-xs font-mono text-slate-400">Ref: {application.refNumber}</span>
+            <span className="text-xs font-mono text-slate-400 font-bold">Ref: {application.refNumber}</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-xl font-bold text-slate-900">
             Committee Review: {application.applicantName}
           </h1>
-          <p className="text-xs text-slate-500">
+          <p className="text-[11px] text-slate-500">
             Sitting Date: <strong>20 November 2026</strong> &bull; Member: {currentUser.name} ({currentUser.designation})
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => navigate('/committee/dashboard')}
+            className="text-xs"
           >
-            &larr; Back to Committee Chamber
+            &larr; Committee Chamber
           </Button>
 
           <Button
             variant="primary"
             size="sm"
             onClick={() => setDecisionModalOpen(true)}
-            icon={<Gavel className="w-4 h-4" />}
-            className="bg-indigo-700 hover:bg-indigo-800"
+            icon={<Gavel className="w-3.5 h-3.5" />}
+            className="bg-indigo-700 hover:bg-indigo-800 text-xs"
           >
             Record Statutory Decision
           </Button>

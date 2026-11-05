@@ -158,12 +158,12 @@ export const DigitalCaseFile: React.FC = () => {
   const verifiedDocsCount = application.documents.filter((d) => d.status === 'verified').length;
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 sm:p-5 max-w-7xl mx-auto space-y-4">
       {/* Top Banner */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="space-y-1">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div className="space-y-0.5">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="blue" className="text-xs uppercase tracking-wider">
+            <Badge variant="blue" className="text-[10px] uppercase tracking-wider">
               Digital Case File • Screen O05
             </Badge>
             <span className="text-xs font-mono text-slate-500 font-bold">{application.refNumber}</span>
@@ -175,26 +175,28 @@ export const DigitalCaseFile: React.FC = () => {
                   ? 'amber'
                   : 'blue'
               }
+              size="sm"
             >
               {application.statusLabel}
             </Badge>
-            <Badge variant={application.priority === 'critical' ? 'red' : 'gray'}>
+            <Badge variant={application.priority === 'critical' ? 'red' : 'gray'} size="sm">
               Priority: {application.priority.toUpperCase()}
             </Badge>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">{application.applicantName}</h1>
-          <p className="text-xs text-slate-500">
+          <h1 className="text-xl font-bold text-slate-900">{application.applicantName}</h1>
+          <p className="text-[11px] text-slate-500">
             Assigned Scrutiny Officer: <strong>{application.assignedOfficerName || 'M. Srinivasan'}</strong> &bull; Submitted:{' '}
             {application.submissionDate} &bull; Stream: 3-Year LL.B (TNDALU)
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => exportApplicationsToCSV([application])}
-            icon={<Download className="w-4 h-4 text-slate-600" />}
+            icon={<Download className="w-3.5 h-3.5 text-slate-600" />}
+            className="text-xs"
           >
             Export Dossier
           </Button>
@@ -204,19 +206,20 @@ export const DigitalCaseFile: React.FC = () => {
             size="sm"
             isLoading={isAIProcessing}
             onClick={handleRunAI}
-            icon={<Sparkles className="w-4 h-4" />}
+            icon={<Sparkles className="w-3.5 h-3.5" />}
+            className="text-xs"
           >
-            {application.aiReviewSummary ? 'Re-Run AI Review' : 'Run AI Document Review'}
+            {application.aiReviewSummary ? 'Re-Run AI Review' : 'Run AI Review'}
           </Button>
         </div>
       </div>
 
       {/* Main Two-Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Left Column (3 cols): Tabs & Content */}
-        <div className="lg:col-span-3 space-y-4">
+        <div className="lg:col-span-3 space-y-3">
           {/* Specialized Tabs Navigation */}
-          <div className="bg-white rounded-xl border border-slate-200 p-1 flex items-center gap-1 overflow-x-auto text-xs font-semibold">
+          <div className="bg-white rounded-xl border border-slate-200 p-1 flex items-center gap-1 overflow-x-auto text-[11px] font-semibold">
             {[
               { id: 'overview', label: 'Overview', icon: FileText },
               { id: 'details', label: 'Details', icon: User },

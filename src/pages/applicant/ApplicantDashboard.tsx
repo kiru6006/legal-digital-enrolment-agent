@@ -35,54 +35,56 @@ export const ApplicantDashboard: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="p-4 sm:p-5 max-w-6xl mx-auto space-y-4">
       {/* Welcome Banner */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="space-y-1">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div className="space-y-0.5">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
-              Applicant Portal
+            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
+              Applicant Portal • Screen A02
             </span>
-            <span className="text-xs text-slate-400 font-mono">Ref: {primaryApplication.refNumber}</span>
+            <span className="text-xs text-slate-400 font-mono font-bold">Ref: {primaryApplication.refNumber}</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-xl font-bold text-slate-900">
             Welcome, {primaryApplication.applicantName}
           </h1>
-          <p className="text-xs text-slate-500">
+          <p className="text-[11px] text-slate-500">
             Enrolment application submitted on {primaryApplication.submissionDate} to the Bar Council of Tamil Nadu &amp; Puducherry.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => navigate('/applicant/checklist')}
             className="text-xs"
           >
-            11-Doc Checklist &amp; Pass
+            11-Doc Checklist
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={handleDownloadSummary}
-            icon={<Download className="w-4 h-4 text-slate-600" />}
+            icon={<Download className="w-3.5 h-3.5 text-slate-600" />}
+            className="text-xs"
           >
-            Download Summary
+            Summary CSV
           </Button>
           <Button
             variant="primary"
             size="sm"
             onClick={() => navigate(`/applicant/application/${PRIMARY_DEMO_APP_ID}`)}
-            icon={<FileText className="w-4 h-4" />}
+            icon={<FileText className="w-3.5 h-3.5" />}
+            className="text-xs"
           >
-            View Application
+            View Dossier
           </Button>
         </div>
       </div>
 
       {/* 5-Stage Statutory Progress Bar (Screen APP-01) */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <span className="text-xs font-bold text-slate-900 uppercase tracking-wide">
@@ -93,15 +95,15 @@ export const ApplicantDashboard: React.FC = () => {
             </p>
           </div>
           <div className="text-right">
-            <span className="text-xl font-extrabold text-blue-600 font-mono">
+            <span className="text-lg font-extrabold text-blue-600 font-mono">
               {primaryApplication.progressPercentage}%
             </span>
-            <span className="block text-[10px] text-slate-400 font-semibold uppercase">Overall Completion</span>
+            <span className="block text-[9px] text-slate-400 font-semibold uppercase">Overall Completion</span>
           </div>
         </div>
 
         {/* 5 Stages Horizontal Tracker */}
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 pt-1">
           {[
             { step: '1', title: 'Submission', desc: 'Online filing & fee receipt', status: 'completed' },
             { step: '2', title: 'AI Intake Check', desc: 'Classification & OCR match', status: 'completed' },

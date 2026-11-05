@@ -32,20 +32,20 @@ export const Badge: React.FC<BadgeProps> = ({
 }) => {
   const variantStyles: Record<BadgeVariant, string> = {
     default: 'bg-[var(--semantic-neutral-soft)] text-[var(--color-text-secondary)] border-[var(--color-border)]',
-    primary: 'bg-[var(--semantic-primary-soft)] text-[var(--google-blue-strong)] border-[#C2E7FF]',
-    success: 'bg-[var(--semantic-success-soft)] text-[var(--google-green-dark)] border-[#C4EED0]',
-    warning: 'bg-[var(--semantic-warning-soft)] text-[#B06000] border-[#FEEFC3]',
-    danger: 'bg-[var(--semantic-error-soft)] text-[var(--google-red-dark)] border-[#FAD2CF]',
-    violet: 'bg-[var(--semantic-ai-soft)] text-[var(--color-purple-dark)] border-[#E9D5FF]',
-    brand: 'bg-[var(--vignxs-soft)] text-[var(--vignxs-crimson)] border-[var(--vignxs-pink-light)]',
+    primary: 'bg-[var(--semantic-primary-soft)] text-[var(--google-blue-strong)] border-[#C2E7FF] dark:border-blue-900/60',
+    success: 'bg-[var(--semantic-success-soft)] text-[var(--google-green-dark)] border-[#C4EED0] dark:border-emerald-900/60',
+    warning: 'bg-[var(--semantic-warning-soft)] text-[#B06000] dark:text-[#FDD663] border-[#FEEFC3] dark:border-amber-900/60',
+    danger: 'bg-[var(--semantic-error-soft)] text-[var(--google-red-dark)] border-[#FAD2CF] dark:border-rose-900/60',
+    violet: 'bg-[var(--semantic-ai-soft)] text-[var(--color-purple-dark)] border-[#E9D5FF] dark:border-purple-900/60',
+    brand: 'bg-[var(--vignxs-soft)] text-[var(--vignxs-crimson)] border-[var(--vignxs-pink-light)] dark:border-rose-950',
     neutral: 'bg-[var(--semantic-neutral-soft)] text-[var(--color-text-secondary)] border-[var(--color-border)]',
-    blue: 'bg-[var(--semantic-primary-soft)] text-[var(--google-blue-strong)] border-[#C2E7FF]',
-    green: 'bg-[var(--semantic-success-soft)] text-[var(--google-green-dark)] border-[#C4EED0]',
-    amber: 'bg-[var(--semantic-warning-soft)] text-[#B06000] border-[#FEEFC3]',
-    red: 'bg-[var(--semantic-error-soft)] text-[var(--google-red-dark)] border-[#FAD2CF]',
-    purple: 'bg-[var(--semantic-ai-soft)] text-[var(--color-purple-dark)] border-[#E9D5FF]',
+    blue: 'bg-[var(--semantic-primary-soft)] text-[var(--google-blue-strong)] border-[#C2E7FF] dark:border-blue-900/60',
+    green: 'bg-[var(--semantic-success-soft)] text-[var(--google-green-dark)] border-[#C4EED0] dark:border-emerald-900/60',
+    amber: 'bg-[var(--semantic-warning-soft)] text-[#B06000] dark:text-[#FDD663] border-[#FEEFC3] dark:border-amber-900/60',
+    red: 'bg-[var(--semantic-error-soft)] text-[var(--google-red-dark)] border-[#FAD2CF] dark:border-rose-900/60',
+    purple: 'bg-[var(--semantic-ai-soft)] text-[var(--color-purple-dark)] border-[#E9D5FF] dark:border-purple-900/60',
     gray: 'bg-[var(--semantic-neutral-soft)] text-[var(--color-text-secondary)] border-[var(--color-border)]',
-    outline: 'bg-transparent text-slate-700 border-slate-300',
+    outline: 'bg-transparent text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700',
   };
 
   const sizeStyles = {
@@ -56,7 +56,7 @@ export const Badge: React.FC<BadgeProps> = ({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 border transition-colors',
+        'inline-flex items-center gap-1 border transition-colors whitespace-nowrap shrink-0',
         variantStyles[variant],
         sizeStyles[size],
         className

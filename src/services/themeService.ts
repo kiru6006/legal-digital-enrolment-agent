@@ -45,3 +45,4 @@ export const toggleTheme = (currentTheme: ThemeMode): ThemeMode => {
   applyTheme(nextTheme);
   return nextTheme;
 };
+

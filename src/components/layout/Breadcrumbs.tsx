@@ -36,9 +36,9 @@ export const Breadcrumbs: React.FC = () => {
   };
 
   return (
-    <nav className="flex items-center gap-1.5 text-xs text-slate-500 py-3 px-6 bg-white border-b border-slate-200">
-      <Link to="/" className="hover:text-blue-600 transition-colors flex items-center gap-1">
-        <Home className="w-3.5 h-3.5" />
+    <nav className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)] py-2.5 px-6 bg-[var(--color-surface-white)] border-b border-[var(--color-border)] whitespace-nowrap overflow-x-auto">
+      <Link to="/" className="hover:text-[var(--google-blue-strong)] transition-colors flex items-center gap-1 shrink-0">
+        <Home className="w-3.5 h-3.5 text-[var(--color-text-muted)] shrink-0" />
         <span>Home</span>
       </Link>
       {pathnames.map((segment, index) => {
@@ -48,11 +48,11 @@ export const Breadcrumbs: React.FC = () => {
 
         return (
           <React.Fragment key={routeTo}>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <ChevronRight className="w-3.5 h-3.5 text-[var(--color-text-muted)] shrink-0" />
             {isLast ? (
-              <span className="font-semibold text-slate-800">{displayName}</span>
+              <span className="font-semibold text-[var(--color-text-primary)] shrink-0">{displayName}</span>
             ) : (
-              <Link to={routeTo} className="hover:text-blue-600 transition-colors">
+              <Link to={routeTo} className="hover:text-[var(--google-blue-strong)] hover:underline transition-colors shrink-0">
                 {displayName}
               </Link>
             )}

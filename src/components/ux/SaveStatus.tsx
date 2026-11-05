@@ -17,22 +17,22 @@ export const SaveStatus: React.FC<SaveStatusProps> = ({
 }) => {
   if (status === 'saving') {
     return (
-      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[11px] font-medium">
-        <RotateCw className="w-3 h-3 animate-spin text-blue-600" />
-        <span>{t('saveStatusAutosaving', currentLang)}</span>
+      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 dark:border-blue-900/60 text-blue-700 dark:text-blue-300 text-[11px] font-medium whitespace-nowrap shrink-0">
+        <RotateCw className="w-3 h-3 animate-spin text-blue-600 dark:text-blue-400 shrink-0" />
+        <span className="whitespace-nowrap">{t('saveStatusAutosaving', currentLang)}</span>
       </div>
     );
   }
 
   if (status === 'error') {
     return (
-      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-[11px] font-medium">
-        <AlertTriangle className="w-3 h-3 text-rose-600" />
-        <span>Save failed</span>
+      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 text-[11px] font-medium whitespace-nowrap shrink-0">
+        <AlertTriangle className="w-3 h-3 text-rose-600 dark:text-rose-400 shrink-0" />
+        <span className="whitespace-nowrap">Save failed</span>
         {onRetry && (
           <button
             onClick={onRetry}
-            className="underline font-bold text-rose-800 hover:text-rose-950 ml-1"
+            className="underline font-bold text-rose-800 dark:text-rose-200 hover:text-rose-950 ml-1 cursor-pointer"
           >
             Retry
           </button>
@@ -43,11 +43,11 @@ export const SaveStatus: React.FC<SaveStatusProps> = ({
 
   return (
     <div
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-medium"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 dark:border-emerald-900/60 text-emerald-800 dark:text-emerald-300 text-[11px] font-medium whitespace-nowrap shrink-0"
       title="All changes are automatically saved to your draft session"
     >
-      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-      <span>
+      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+      <span className="whitespace-nowrap">
         {t('saveStatusSaved', currentLang)} {lastSavedTime}
       </span>
     </div>

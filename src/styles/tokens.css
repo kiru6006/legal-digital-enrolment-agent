@@ -80,34 +80,60 @@
 }
 
 /* ==========================================================================
-   Dark Mode Tokens matching legal-professionals-agent
+   Dark Mode Tokens matching legal-professionals-agent with High-Contrast Accessible Palette
    ========================================================================== */
 .dark {
+  /* Google & Primary Brand Colors - High Contrast for Dark Mode */
+  --google-blue: #8AB4F8;
+  --google-blue-strong: #8AB4F8;
+  --google-red: #F28B82;
+  --google-red-dark: #F28B82;
+  --google-yellow: #FDD663;
+  --google-green: #81C995;
+  --google-green-dark: #81C995;
+
+  /* Extended Vibrance Palette (Lightened for dark background contrast) */
+  --color-purple: #D7AEFB;
+  --color-purple-dark: #D7AEFB;
+  --color-indigo: #B388FF;
+  --color-cyan: #78D9EC;
+  --color-orange: #FCAD70;
+  --color-pink: #FF8BCB;
+  --color-teal: #80CBC4;
+  --color-lime: #C0CA33;
+
+  /* Vignxs Crimson Editorial Brand Identity */
+  --vignxs-crimson: #FF6680;
+  --vignxs-crimson-deep: #FF8599;
+  --vignxs-rose: #FFA4B6;
+  --vignxs-rose-soft: #FFB3C6;
+  --vignxs-pink-light: #5A2735;
+  --vignxs-hover: #291219;
+  --vignxs-selected: #3B1621;
+  --vignxs-soft: #2E151E;
+
+  /* Dark Neutral Palette */
   --color-bg-main: #131417;
   --color-surface-white: #1E2024;
   --color-surface-muted: #282A2E;
   --color-surface-dark: #111115;
   --color-code-bg: #0D0E11;
   --color-text-primary: #F1F3F4;
-  --color-text-secondary: #BDC1C6;
-  --color-text-muted: #80868B;
+  --color-text-secondary: #C4C7C5;
+  --color-text-muted: #9AA0A6;
   --color-border: #32353B;
-  --color-border-strong: #454950;
+  --color-border-strong: #4F535B;
   --color-table-row-border: #353840;
 
   /* Dark mode soft backgrounds */
-  --semantic-primary-soft: #1C2D4B;
-  --semantic-success-soft: #173824;
-  --semantic-error-soft: #3D1C1B;
-  --semantic-warning-soft: #3D3215;
-  --semantic-ai-soft: #2D1A45;
+  --semantic-primary-soft: #17263C;
+  --semantic-success-soft: #132A1C;
+  --semantic-error-soft: #2E1518;
+  --semantic-warning-soft: #2D2413;
+  --semantic-ai-soft: #27173A;
   --semantic-info-soft: #10333D;
   --semantic-brand-soft: #38131D;
   --semantic-neutral-soft: #282A2E;
-
-  --vignxs-hover: #291219;
-  --vignxs-selected: #3B1621;
-  --vignxs-soft: #2E151E;
 
   /* Standard shadcn/ui mapped variables */
   --background: var(--color-bg-main);
@@ -117,7 +143,7 @@
   --popover: var(--color-surface-white);
   --popover-foreground: var(--color-text-primary);
   --primary: var(--google-blue);
-  --primary-foreground: #FFFFFF;
+  --primary-foreground: #131417;
   --secondary: var(--color-surface-muted);
   --secondary-foreground: var(--color-text-primary);
   --muted: var(--color-surface-muted);
@@ -125,7 +151,7 @@
   --accent: var(--semantic-primary-soft);
   --accent-foreground: var(--google-blue);
   --destructive: var(--google-red);
-  --destructive-foreground: #FFFFFF;
+  --destructive-foreground: #131417;
   --border: var(--color-border);
   --input: var(--color-border);
   --ring: var(--google-blue);

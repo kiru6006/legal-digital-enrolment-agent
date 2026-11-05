@@ -24,17 +24,17 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const variantStyles = {
       primary:
-        'bg-[var(--google-blue-strong)] text-white hover:bg-[#1765CC] active:bg-[#1557B0] shadow-xs border border-transparent disabled:opacity-50',
+        'bg-[var(--google-blue-strong)] text-white hover:opacity-95 active:opacity-90 shadow-xs border border-transparent disabled:opacity-50',
       secondary:
-        'bg-[var(--color-surface-muted)] text-[var(--color-text-primary)] hover:bg-[#E8EAED] active:bg-[#DADCE0] border border-[var(--color-border)] disabled:opacity-50',
+        'bg-[var(--color-surface-muted)] text-[var(--color-text-primary)] hover:bg-[var(--color-border)] active:bg-[var(--color-border-strong)] border border-[var(--color-border)] disabled:opacity-50',
       outline:
-        'bg-[var(--color-surface-white)] text-[var(--color-text-primary)] hover:bg-[var(--semantic-primary-soft)] hover:text-[var(--google-blue-strong)] hover:border-[#C2E7FF] border border-[var(--color-border)] active:bg-[#F1F3F4] shadow-xs disabled:opacity-50',
+        'bg-[var(--color-surface-white)] text-[var(--color-text-primary)] hover:bg-[var(--semantic-primary-soft)] hover:text-[var(--google-blue-strong)] hover:border-[var(--color-border-strong)] border border-[var(--color-border)] active:bg-[var(--color-surface-muted)] shadow-xs disabled:opacity-50',
       ghost:
         'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)] border border-transparent disabled:opacity-40',
       danger:
-        'bg-[var(--google-red)] text-white hover:bg-[var(--google-red-dark)] active:bg-[#B31412] shadow-xs border border-transparent disabled:opacity-50',
+        'bg-[var(--google-red)] text-white hover:bg-[var(--google-red-dark)] active:opacity-90 shadow-xs border border-transparent disabled:opacity-50',
       brand:
-        'bg-[var(--vignxs-crimson)] text-white hover:bg-[var(--vignxs-crimson-deep)] active:bg-[#8E0023] shadow-xs border border-transparent disabled:opacity-50',
+        'bg-[var(--vignxs-crimson)] text-white hover:bg-[var(--vignxs-crimson-deep)] active:opacity-90 shadow-xs border border-transparent disabled:opacity-50',
       ai:
         'bg-gradient-to-r from-[var(--color-purple)] to-[var(--color-indigo)] text-white hover:opacity-95 active:opacity-90 shadow-xs border border-transparent disabled:opacity-50',
     };

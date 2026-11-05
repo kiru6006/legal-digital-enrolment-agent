@@ -346,19 +346,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
 
         {/* Bottom Expand / Collapse Toggle Bar (Desktop only) */}
-        <div className="border-t border-[var(--color-surface-muted)] hidden md:block">
+        <div className="border-t border-[var(--color-border)] hidden md:block">
           {!isCollapsed ? (
             <div className="p-2.5">
               <button
                 onClick={onToggleCollapse}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-muted)] transition-colors cursor-pointer"
                 title="Collapse sidebar (⌘B)"
               >
                 <span className="flex items-center gap-2">
-                  <PanelLeftClose className="w-4 h-4 text-slate-400" />
+                  <PanelLeftClose className="w-4 h-4 text-[var(--color-text-muted)]" />
                   <span>Collapse Menu</span>
                 </span>
-                <kbd className="text-[10px] bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded text-slate-400 font-mono">
+                <kbd className="text-[10px] bg-[var(--color-surface-muted)] border border-[var(--color-border)] px-1.5 py-0.5 rounded text-[var(--color-text-muted)] font-mono">
                   ⌘B
                 </kbd>
               </button>
@@ -367,11 +367,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="p-2 flex justify-center">
               <button
                 onClick={onToggleCollapse}
-                className="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer group relative"
+                className="p-2 rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-muted)] transition-colors cursor-pointer group relative"
                 title="Expand menu (⌘B)"
                 aria-label="Expand menu"
               >
-                <ChevronRight className="w-4 h-4 text-slate-500" />
+                <ChevronRight className="w-4 h-4 text-[var(--color-text-muted)]" />
                 <div className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium rounded-md shadow-lg whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
                   Expand Menu (⌘B)
                 </div>

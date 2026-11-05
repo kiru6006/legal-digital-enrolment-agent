@@ -78,12 +78,12 @@ export const NextActionCard: React.FC<NextActionCardProps> = ({ currentLang = 'e
   }
 
   return (
-    <div className="bg-gradient-to-r from-amber-500/10 via-white to-blue-50/40 border-2 border-amber-300/80 rounded-2xl p-4 shadow-xs relative overflow-hidden">
+    <div className="bg-gradient-to-r from-amber-500/10 via-[var(--color-surface-white)] to-blue-500/10 border-2 border-amber-300/80 dark:border-amber-800/80 rounded-2xl p-4 shadow-xs relative overflow-hidden">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="space-y-1.5 max-w-3xl">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100/70 border border-amber-300 px-2 py-0.5 rounded-md">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-200 bg-amber-100/70 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-800 px-2 py-0.5 rounded-md">
               {t('nextActionTitle', currentLang)}
             </span>
             <Badge variant={badgeVariant} size="sm">
@@ -91,8 +91,8 @@ export const NextActionCard: React.FC<NextActionCardProps> = ({ currentLang = 'e
             </Badge>
           </div>
 
-          <h3 className="text-base font-bold text-slate-900 tracking-tight">{actionTitle}</h3>
-          <p className="text-xs text-slate-600 leading-relaxed">{actionDesc}</p>
+          <h3 className="text-base font-bold text-slate-900 dark:text-[var(--color-text-primary)] tracking-tight">{actionTitle}</h3>
+          <p className="text-xs text-slate-600 dark:text-[var(--color-text-secondary)] leading-relaxed">{actionDesc}</p>
         </div>
 
         <div className="shrink-0 flex items-center gap-2 w-full md:w-auto">
